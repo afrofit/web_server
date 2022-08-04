@@ -1,0 +1,51 @@
+{
+  "name": "afrofit_web_server",
+  "version": "0.0.1",
+  "description": "Afrofit Backend NodeJs / Typescript",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/argon2": "^0.15.0",
+    "@types/body-parser": "^1.19.2",
+    "@types/cookie-parser": "^1.4.3",
+    "@types/cors": "^2.8.12",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.13",
+    "@types/joi": "^17.2.3",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/lodash": "^4.14.182",
+    "@types/morgan": "^1.9.3",
+    "@types/node": "^16.11.10",
+    "@types/uuid": "^8.3.4",
+    "nodemon": "^2.0.19",
+    "ts-node": "10.7.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "4.5.2"
+  },
+  "dependencies": {
+    "argon2": "^0.28.7",
+    "body-parser": "^1.20.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "date-fns": "^2.29.1",
+    "express": "^4.18.1",
+    "express-async-errors": "^3.1.1",
+    "helmet": "^5.1.1",
+    "jest": "^28.1.3",
+    "joi": "^17.6.0",
+    "joi-objectid": "^4.0.2",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "mongodb": "^3.0.8",
+    "morgan": "^1.10.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "0.3.7",
+    "uuid": "^8.3.2"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "ts-dev": "ts-node-dev src/index.ts",
+    "watch": "tsc -w",
+    "dev": "nodemon --exec node --experimental-modules build/index.js"
+  }
+}
