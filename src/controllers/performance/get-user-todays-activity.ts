@@ -13,21 +13,12 @@ const getUserTodaysActivity = async (req: Request, res: Response) => {
   try {
     const todaysActivityRepo = AppDataSource.getMongoRepository(TodaysActivity);
 
-    /**
-     * Get all activities by user
-     * Fetch the latest activity
-     * if it's from today, return it
-     * instead, create a new todaysactivity and return that instead
-     */
-
     const existingActivities = await todaysActivityRepo.find({
       where: { userId: userId },
       order: {
         createdAt: "DESC",
       },
     });
-
-    console.log("existingActivities", existingActivities);
 
     if (!existingActivities || !existingActivities.length)
       return res
@@ -44,8 +35,6 @@ const getUserTodaysActivity = async (req: Request, res: Response) => {
     const isTodaysActivity = isToday(new Date(existingActivity.createdAt));
 
     let newTodayActivity: TodayActivityType | null;
-
-    console.log("isTodaysActivity? ", isTodaysActivity);
 
     if (isTodaysActivity) {
       newTodayActivity = existingActivity;
