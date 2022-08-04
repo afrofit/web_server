@@ -15,10 +15,10 @@ export class TodaysActivity {
   @Column()
   userId: string;
 
-  @Column()
+  @Column({ default: 0 })
   bodyMovements: number;
 
-  @Column()
+  @Column({ default: 0 })
   caloriesBurned: number;
 
   @CreateDateColumn()

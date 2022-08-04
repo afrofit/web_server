@@ -58,6 +58,11 @@ export class User {
       {
         userId: this.id,
         username: this.username,
+        email: this.email,
+        firstName: this.firstName,
+        lastName: this.lastName,
+        displayPicId: this.displayPicId,
+        joinDate: this.createdAt,
       },
       process.env.TOKEN_SECRET!
     );

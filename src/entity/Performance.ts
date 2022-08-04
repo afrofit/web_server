@@ -15,16 +15,16 @@ export class Performance {
   @Column()
   userId: string;
 
-  @Column()
+  @Column({ default: 0 })
   caloriesBurned: number;
 
-  @Column()
+  @Column({ default: 0 })
   daysActive: number;
 
-  @Column()
+  @Column({ default: 0 })
   totalUserSteps: number;
 
-  @Column()
+  @Column({ default: 0 })
   totalUserTime: number;
 
   @CreateDateColumn()

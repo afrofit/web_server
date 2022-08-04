@@ -1,6 +1,8 @@
-import { AppDataSource } from "./../../data-source";
 import { Request, Response } from "express";
 import _ from "lodash";
+import { Performance } from "./../../entity/Performance";
+import { TodaysActivity } from "./../../entity/TodaysActivity";
+import { AppDataSource } from "./../../data-source";
 
 import { STATUS_CODES } from "../../types/status-codes";
 import validateCreateUser from "./validation/create-user";
@@ -21,8 +23,6 @@ const createUser = async (req: Request, res: Response) => {
     displayPicId,
     password,
   }: CreateUserRequestType = req.body;
-
-  console.log("REQBODY", req.body);
 
   try {
     const usersRepo = AppDataSource.getMongoRepository(User);
@@ -51,20 +51,32 @@ const createUser = async (req: Request, res: Response) => {
 
     await usersRepo.save(user);
 
-    const token = user.generateToken();
+    /** We need to create empty activities for the user also */
+    const todaysActivityRepo = AppDataSource.getMongoRepository(TodaysActivity);
+    const performanceRepo = AppDataSource.getMongoRepository(Performance);
 
-    const trimmedUser = _.pick(user, [
-      "email",
-      "firstName",
-      "lastName",
-      "username",
-      "displayPicId",
-    ]);
+    const todaysActivity = new TodaysActivity();
+    const performanceData = new Performance();
+
+    performanceData.userId = user.id.toString();
+    performanceData.caloriesBurned = 0;
+    performanceData.daysActive = 0;
+    performanceData.totalUserSteps = 0;
+    performanceData.totalUserTime = 0;
+
+    todaysActivity.userId = user.id.toString();
+    todaysActivity.caloriesBurned = 0;
+    todaysActivity.bodyMovements = 0;
+
+    await performanceRepo.save(performanceData);
+    await todaysActivityRepo.save(todaysActivity);
+
+    const token = user.generateToken();
 
     return res
       .status(STATUS_CODES.CREATED)
       .header(process.env.TOKEN_HEADER, token)
-      .send({ token, user: trimmedUser });
+      .send({ token });
   } catch (error) {
     console.error(error);
     return res

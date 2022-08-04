@@ -9,6 +9,7 @@ import { STATUS_CODES } from "./types/status-codes";
 import { userRoutes } from "./routes/user";
 import { performanceRoutes } from "./routes/performance";
 import { marathonRoutes } from "./routes/marathon";
+import { paymentRoutes } from "./routes/payment";
 
 /* App Setup */
 
@@ -26,6 +27,7 @@ app.use(cors());
 app.use("/users", userRoutes);
 app.use("/performance", performanceRoutes);
 app.use("/marathon", marathonRoutes);
+app.use("/payment", paymentRoutes);
 
 /* Catch-Alls */
 
