@@ -31,6 +31,17 @@ const cancelUserSubscription = async (req: Request, res: Response) => {
 
     const isActive = subscription.status === "active";
 
+    /** Now let's strip the users of all their stripe-related Ids */
+
+    if (
+      existingUser.stripeCustomerId ||
+      existingUser.lastActiveSubscriptionId
+    ) {
+      existingUser.stripeCustomerId = null;
+      existingUser.lastActiveSubscriptionId = null;
+      await usersRepo.save(existingUser);
+    }
+
     console.log("isActive", isActive);
 
     return res.status(STATUS_CODES.OK).send({ activeSubscription: isActive });
