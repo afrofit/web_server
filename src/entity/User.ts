@@ -37,6 +37,9 @@ export class User {
   @Column({ nullable: true })
   stripeCustomerId: string;
 
+  @Column({ nullable: true })
+  lastActiveSubscriptionId: string;
+
   @CreateDateColumn()
   createdAt: string;
 

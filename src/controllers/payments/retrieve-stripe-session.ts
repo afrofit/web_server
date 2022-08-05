@@ -34,8 +34,12 @@ const retrieveStripeSession = async (req: Request, res: Response) => {
     console.log("session", session);
 
     /** Now let's conditionally update the user's stripeCustomerId */
-    if (!existingUser.stripeCustomerId) {
+    if (
+      !existingUser.stripeCustomerId ||
+      !existingUser.lastActiveSubscriptionId
+    ) {
       existingUser.stripeCustomerId = session.customer as string;
+      existingUser.lastActiveSubscriptionId = session.subscription as string;
       await usersRepo.save(existingUser);
     }
 
