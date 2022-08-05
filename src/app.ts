@@ -21,7 +21,7 @@ app.use(logger("dev"));
 app.use(helmet());
 app.use(cookieParser());
 
-app.use(cors());
+app.use(cors({ origin: [process.env.CLIENT_URL] }));
 
 /* Stripe Setup */
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {

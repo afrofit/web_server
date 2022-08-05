@@ -18,8 +18,6 @@ const updateUserDp = async (req: Request, res: Response) => {
 
   const { displayPicId }: { displayPicId: number } = req.body;
 
-  console.log("Datarrr?: ", userId, displayPicId);
-
   const formattedUserId = ObjectID(userId);
 
   try {
