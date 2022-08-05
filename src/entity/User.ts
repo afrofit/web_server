@@ -34,6 +34,9 @@ export class User {
   @Column()
   displayPicId: number;
 
+  @Column({ nullable: true })
+  stripeCustomerId: string;
+
   @CreateDateColumn()
   createdAt: string;
 

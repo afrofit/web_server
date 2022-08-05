@@ -9,7 +9,8 @@ import { STATUS_CODES } from "./types/status-codes";
 import { userRoutes } from "./routes/user";
 import { performanceRoutes } from "./routes/performance";
 import { marathonRoutes } from "./routes/marathon";
-import { paymentRoutes } from "./routes/payment";
+import { paymentRoutes } from "./routes/payments";
+import Stripe from "stripe";
 
 /* App Setup */
 
@@ -22,12 +23,17 @@ app.use(cookieParser());
 
 app.use(cors());
 
+/* Stripe Setup */
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2022-08-01",
+});
+
 /* Routes */
 
 app.use("/users", userRoutes);
 app.use("/performance", performanceRoutes);
 app.use("/marathon", marathonRoutes);
-app.use("/payment", paymentRoutes);
+app.use("/payments", paymentRoutes);
 
 /* Catch-Alls */
 
@@ -41,4 +47,4 @@ app.all("*", async (req: Request, res: Response) => {
     .send("Sorry. Nothing lives here.");
 });
 
-export { app };
+export { app, stripe };

@@ -12,5 +12,5 @@ export const AppDataSource = new DataSource({
   port: 27017,
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  dropSchema: true,
+  // dropSchema: true,
 });
