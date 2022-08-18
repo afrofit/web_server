@@ -1,4 +1,5 @@
 import argon2 from "argon2";
+import { th } from "date-fns/locale";
 import jwt from "jsonwebtoken";
 
 import {
@@ -33,6 +34,9 @@ export class User {
 
   @Column()
   displayPicId: number;
+
+  @Column({ default: 0 })
+  lastStoryCompleted: number;
 
   @Column({ nullable: true })
   stripeCustomerId: string;
@@ -69,6 +73,7 @@ export class User {
         lastName: this.lastName,
         displayPicId: this.displayPicId,
         joinDate: this.createdAt,
+        lastStoryCompleted: this.lastStoryCompleted,
       },
       process.env.TOKEN_SECRET!
     );
@@ -81,5 +86,10 @@ export class User {
       const hashedPassword = await this.hashPassword(this.password);
       this.password = hashedPassword;
     }
+  }
+
+  @BeforeInsert()
+  async updateLastStoryCompleted(): Promise<void> {
+    this.lastStoryCompleted = 0;
   }
 }

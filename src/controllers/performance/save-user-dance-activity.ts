@@ -7,21 +7,36 @@ import { ObjectID } from "mongodb";
 import { AppDataSource } from "../../data-source";
 import { STATUS_CODES } from "../../types/status-codes";
 import { PlayedChapter } from "../../entity/PlayedChapter";
+import { User } from "../../entity/User";
 
 const saveUserDanceActivity = async (req: Request, res: Response) => {
   const { userId, chapterId, playedStoryId } = req.params;
 
-  const { timeDancedMS, userSteps, clampedUserSteps, chapterCompleted } =
-    req.body.data;
+  const {
+    timeDancedMS,
+    userSteps,
+    clampedUserSteps,
+    chapterCompleted,
+    storyCompleted,
+  } = req.body.data;
 
   console.log("Params!", req.params);
   console.log("Body!", req.body);
-  console.log(userId, chapterId, playedStoryId);
 
   const formattedUserId = ObjectID(userId);
   const formattedPlayedStoryId = ObjectID(playedStoryId);
 
   try {
+    const usersRepo = AppDataSource.getMongoRepository(User);
+    const existingUser = await usersRepo.findOneBy({
+      where: { _id: formattedUserId },
+    });
+
+    if (!existingUser)
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .send("We can't quite retrieve your user details.");
+
     const playedStoryRepo = AppDataSource.getMongoRepository(PlayedStory);
     const playedChapterRepo = AppDataSource.getMongoRepository(PlayedChapter);
     const performanceRepo = AppDataSource.getMongoRepository(Performance);
@@ -79,13 +94,21 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
       playedStory.lastChapterCompleted += 1;
     }
 
+    // Check if the story is completed
+
+    let token: any = null;
+    if (storyCompleted) {
+      existingUser.lastStoryCompleted += 1;
+      token = existingUser.generateToken();
+    }
+
     await playedStoryRepo.save(playedStory);
     await playedChapterRepo.save(playedChapter);
     await performanceRepo.save(performance);
 
     return res
       .status(STATUS_CODES.CREATED)
-      .send({ chapter: playedChapter, story: playedStory, performance });
+      .send({ chapter: playedChapter, story: playedStory, performance, token });
   } catch (error) {
     console.error(error);
     return res
