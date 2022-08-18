@@ -24,6 +24,9 @@ export class PlayedStory {
   @Column()
   userTime: number;
 
+  @Column({ default: 0 })
+  lastChapterCompleted: number;
+
   @CreateDateColumn()
   createdAt: string;
 

@@ -16,6 +16,9 @@ export class PlayedChapter {
   chapterId: string;
 
   @Column()
+  playedStoryId: string;
+
+  @Column()
   storyId: string;
 
   @Column()
