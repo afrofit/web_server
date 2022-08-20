@@ -1,13 +1,17 @@
-import { Performance } from "./../../entity/Performance";
-import { PlayedStory } from "./../../entity/PlayedStory";
 import { Request, Response } from "express";
 import _ from "lodash";
+import { compareDesc } from "date-fns";
 import { ObjectID } from "mongodb";
 
+import { TodaysActivity } from "./../../entity/TodaysActivity";
+import { Performance } from "./../../entity/Performance";
+import { PlayedStory } from "./../../entity/PlayedStory";
 import { AppDataSource } from "../../data-source";
 import { STATUS_CODES } from "../../types/status-codes";
 import { PlayedChapter } from "../../entity/PlayedChapter";
 import { User } from "../../entity/User";
+
+const CALORIE_MULTPLIER = 1.75;
 
 const saveUserDanceActivity = async (req: Request, res: Response) => {
   const { userId, chapterId, playedStoryId } = req.params;
@@ -40,6 +44,32 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
     const playedStoryRepo = AppDataSource.getMongoRepository(PlayedStory);
     const playedChapterRepo = AppDataSource.getMongoRepository(PlayedChapter);
     const performanceRepo = AppDataSource.getMongoRepository(Performance);
+    const todaysActivityRepo = AppDataSource.getMongoRepository(TodaysActivity);
+
+    const todaysActivities = await todaysActivityRepo.find({
+      where: { userId },
+    });
+
+    if (!todaysActivities || todaysActivities.length < 1) {
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .send("Oops! Your activities today doesn't exist.");
+    }
+
+    const todaysActivity = todaysActivities.sort((a, b) => {
+      const previousDate = a.createdAt;
+      const nextDate = b.createdAt;
+      const result = compareDesc(new Date(previousDate), new Date(nextDate));
+      return result;
+    })[0];
+
+    if (!todaysActivity) {
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .send("Oops! Your activity today doesn't exist.");
+    }
+
+    console.log("todaysActivity", todaysActivity);
 
     const playedChapter = await playedChapterRepo.findOne({
       where: { userId, chapterId },
@@ -71,19 +101,14 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
         .send("Oops! Your performance data doesn't exist.");
     }
 
-    console.log(
-      "playedChapter",
-      playedChapter,
-      "playedStory",
-      playedStory,
-      "performance",
-      performance
-    );
-
     playedChapter.userTime += timeDancedMS;
     playedStory.userTime += timeDancedMS;
     performance.totalUserTime += timeDancedMS;
 
+    performance.caloriesBurned += userSteps * CALORIE_MULTPLIER;
+    todaysActivity.caloriesBurned += userSteps * CALORIE_MULTPLIER;
+
+    todaysActivity.bodyMovements += userSteps;
     playedChapter.userSteps += clampedUserSteps;
     playedStory.userSteps += clampedUserSteps;
     performance.totalUserSteps += userSteps;
@@ -105,10 +130,15 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
     await playedStoryRepo.save(playedStory);
     await playedChapterRepo.save(playedChapter);
     await performanceRepo.save(performance);
+    await todaysActivityRepo.save(todaysActivity);
 
-    return res
-      .status(STATUS_CODES.CREATED)
-      .send({ chapter: playedChapter, story: playedStory, performance, token });
+    return res.status(STATUS_CODES.CREATED).send({
+      chapter: playedChapter,
+      story: playedStory,
+      performance,
+      today: todaysActivity,
+      token,
+    });
   } catch (error) {
     console.error(error);
     return res
