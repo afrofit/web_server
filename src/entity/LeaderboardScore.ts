@@ -1,19 +1,16 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  // OneToOne,
-  // JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  BaseEntity,
+  ObjectIdColumn,
+  ObjectID,
 } from "typeorm";
-// import { User } from "./User";
 
 @Entity()
-export class LeaderboardScore extends BaseEntity {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+export class LeaderboardScore {
+  @ObjectIdColumn()
+  id: ObjectID;
 
   @Column()
   userId: string;

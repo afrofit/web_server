@@ -1,18 +1,18 @@
 import { endOfWeek, startOfWeek } from "date-fns";
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  BaseEntity,
   BeforeInsert,
+  ObjectIdColumn,
+  ObjectID,
 } from "typeorm";
 
 @Entity()
-export class Leaderboard extends BaseEntity {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+export class Leaderboard {
+  @ObjectIdColumn()
+  id: ObjectID;
 
   @Column()
   endDate: Date;

@@ -3,6 +3,6 @@ import { getMarathonData } from "../controllers/marathon";
 
 const router = express.Router();
 
-router.post("/", getMarathonData);
+router.get("/:userId", getMarathonData);
 
 export { router as marathonRoutes };

@@ -1,3 +1,4 @@
+import { LeaderboardScore } from "./../../entity/LeaderboardScore";
 import { Request, Response } from "express";
 import _ from "lodash";
 import { compareDesc } from "date-fns";
@@ -10,6 +11,7 @@ import { AppDataSource } from "../../data-source";
 import { STATUS_CODES } from "../../types/status-codes";
 import { PlayedChapter } from "../../entity/PlayedChapter";
 import { User } from "../../entity/User";
+import { getActiveLeaderboard } from "../functions/get-active-leaderboard";
 
 const CALORIE_MULTPLIER = 1.75;
 
@@ -45,6 +47,8 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
     const playedChapterRepo = AppDataSource.getMongoRepository(PlayedChapter);
     const performanceRepo = AppDataSource.getMongoRepository(Performance);
     const todaysActivityRepo = AppDataSource.getMongoRepository(TodaysActivity);
+    const leaderboardScoreRepo =
+      AppDataSource.getMongoRepository(LeaderboardScore);
 
     const todaysActivities = await todaysActivityRepo.find({
       where: { userId },
@@ -101,6 +105,32 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
         .send("Oops! Your performance data doesn't exist.");
     }
 
+    const activeLeaderboard = await getActiveLeaderboard();
+
+    if (!activeLeaderboard) {
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .send("Could not find an activeLeaderboard.");
+    }
+
+    const formattedLeaderboardId = ObjectID(activeLeaderboard.id);
+
+    let userLeaderboardScore: LeaderboardScore;
+
+    userLeaderboardScore = await leaderboardScoreRepo.findOne({
+      where: { userId: "sadsfa", leaderboardId: formattedLeaderboardId },
+    });
+
+    if (!userLeaderboardScore) {
+      console.log("We can't find an existing leaderboard score");
+      userLeaderboardScore = new LeaderboardScore();
+      userLeaderboardScore.email = existingUser.email;
+      userLeaderboardScore.userId = existingUser.id.toString();
+      userLeaderboardScore.username = existingUser.username;
+      userLeaderboardScore.leaderboardId = activeLeaderboard.id.toString();
+    }
+
+    userLeaderboardScore.bodyMovements += userSteps;
     playedChapter.userTime += timeDancedMS;
     playedStory.userTime += timeDancedMS;
     performance.totalUserTime += timeDancedMS;
@@ -127,6 +157,7 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
       token = existingUser.generateToken();
     }
 
+    await leaderboardScoreRepo.save(userLeaderboardScore);
     await playedStoryRepo.save(playedStory);
     await playedChapterRepo.save(playedChapter);
     await performanceRepo.save(performance);
