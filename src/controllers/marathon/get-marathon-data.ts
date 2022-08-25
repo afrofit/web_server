@@ -6,7 +6,6 @@ import { ObjectID } from "mongodb";
 import { AppDataSource } from "../../data-source";
 import { STATUS_CODES } from "../../types/status-codes";
 import { createWeeklyLeaderboard } from "../functions/create-weekly-leaderboard";
-import { Leaderboard } from "../../entity/Leaderboard";
 import { User } from "../../entity/User";
 
 const mockData = [
@@ -25,8 +24,6 @@ const mockData = [
 const getMarathonData = async (req: Request, res: Response) => {
   const { userId } = req.params;
 
-  console.log("userId", userId);
-
   const LOWER_LIMIT = 195;
   const formattedUserId = ObjectID(userId);
 
@@ -43,7 +40,6 @@ const getMarathonData = async (req: Request, res: Response) => {
 
     const leaderboardScoresRepo =
       AppDataSource.getMongoRepository(LeaderboardScore);
-    const leaderboardRepo = AppDataSource.getMongoRepository(Leaderboard);
 
     const activeLeaderboard = await createWeeklyLeaderboard();
 
@@ -52,13 +48,6 @@ const getMarathonData = async (req: Request, res: Response) => {
         .status(STATUS_CODES.BAD_REQUEST)
         .send("Error fetching leaderboard");
 
-    // const formattedActiveLeaderboardId = ObjectID(activeLeaderboard.id);
-
-    // const leaderboardScores = await leaderboardScoresRepo.find({
-    //   order: { bodyMovements: "DESC" },
-    //   skip: 0,
-    //   take: LOWER_LIMIT,
-    // });
     const leaderboardScores = await leaderboardScoresRepo.find({
       where: { leaderboardId: activeLeaderboard.id.toString() },
       order: { bodyMovements: "DESC" },
@@ -66,19 +55,14 @@ const getMarathonData = async (req: Request, res: Response) => {
       take: LOWER_LIMIT,
     });
 
-    console.log(
-      "activeLeaderboard.id.toString",
-      activeLeaderboard.id.toString()
-    );
-
-    console.log("leaderboardScores", leaderboardScores);
-
     let userLeaderboardScore = await leaderboardScoresRepo.findOne({
       where: {
         userId: userId,
-        marathonId: activeLeaderboard.id,
+        leaderboardId: activeLeaderboard.id.toString(),
       },
     });
+
+    console.log("userLeaderboardScore", userLeaderboardScore);
 
     if (!userLeaderboardScore) {
       userLeaderboardScore = new LeaderboardScore();
@@ -91,26 +75,31 @@ const getMarathonData = async (req: Request, res: Response) => {
       await leaderboardScoresRepo.save(userLeaderboardScore);
     }
 
-    console.log(
-      "userLeaderboardScore",
-      userLeaderboardScore,
-      "leaderboardScores",
-      leaderboardScores.map((score) => {
-        return {
-          mvts: score.bodyMovements,
-          leaderboardId: score.leaderboardId,
-          username: score.username,
-        };
-      })
-    );
-
     const transformedScores = leaderboardScores.map((score) => {
-      return { name: score.username, score: score.bodyMovements };
+      return {
+        name: score.username,
+        userId: score.userId,
+        score: score.bodyMovements,
+      };
     });
 
-    return res
-      .status(STATUS_CODES.CREATED)
-      .send({ marathon: transformedScores });
+    const transformedUserScore = {
+      name: userLeaderboardScore.username,
+      userId: userLeaderboardScore.userId,
+      score: userLeaderboardScore.bodyMovements,
+    };
+
+    const userScoreIndex = transformedScores
+      .map((score) => score.name)
+      .indexOf(transformedUserScore.name);
+
+    console.log("Datttrr", transformedUserScore, transformedScores);
+
+    return res.status(STATUS_CODES.CREATED).send({
+      marathon: transformedScores,
+      userScore: transformedUserScore,
+      userScoreIndex,
+    });
   } catch (error) {
     console.error(error);
     return res

@@ -6,10 +6,8 @@ export const checkLeaderboard = async () => {
   const leaderboardRepo = AppDataSource.getMongoRepository(Leaderboard);
 
   const existingLeaderboards = await leaderboardRepo.find();
-  console.log("Existing leaderboard", existingLeaderboards);
 
   if (!existingLeaderboards || existingLeaderboards.length < 1) {
     createWeeklyLeaderboard();
-    console.log("nEW LEADERBOARD", existingLeaderboards);
   }
 };

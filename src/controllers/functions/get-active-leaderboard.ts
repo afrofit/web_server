@@ -1,4 +1,5 @@
-import { MoreThan, LessThan } from "typeorm";
+import { isAfter, isBefore } from "date-fns";
+
 import { AppDataSource } from "../../data-source";
 import { Leaderboard } from "../../entity/Leaderboard";
 
@@ -8,18 +9,31 @@ export const getActiveLeaderboard = async (): Promise<Leaderboard | null> => {
   const leaderboardRepo = AppDataSource.getMongoRepository(Leaderboard);
 
   try {
-    const weeklyLeaderboard = await leaderboardRepo.findOne({
-      where: {
-        endDate: MoreThan(TODAY),
-        startDate: LessThan(TODAY),
-      },
+    const existingLeaderboards = await leaderboardRepo.find({
+      order: { createdAt: "DESC" },
     });
 
-    if (!weeklyLeaderboard) {
-      throw new Error("Could not get this week's leaderboard!");
-    }
+    if (existingLeaderboards.length > 0) {
+      const weeklyLeaderboard = existingLeaderboards[0];
+      console.log(
+        typeof weeklyLeaderboard.createdAt,
+        "weeklyLeaderboard.createdAt",
+        weeklyLeaderboard.createdAt
+      );
 
-    return weeklyLeaderboard;
+      if (
+        isAfter(weeklyLeaderboard.endDate, TODAY) &&
+        isBefore(weeklyLeaderboard.startDate, TODAY)
+      ) {
+        return weeklyLeaderboard;
+      } else {
+        const newLeaderboard = new Leaderboard();
+        await leaderboardRepo.save(newLeaderboard);
+
+        return newLeaderboard;
+      }
+    }
+    return null;
   } catch (error) {
     console.error(error);
     return null;

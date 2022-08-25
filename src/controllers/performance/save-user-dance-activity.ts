@@ -26,9 +26,6 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
     storyCompleted,
   } = req.body.data;
 
-  console.log("Params!", req.params);
-  console.log("Body!", req.body);
-
   const formattedUserId = ObjectID(userId);
   const formattedPlayedStoryId = ObjectID(playedStoryId);
 
@@ -113,13 +110,16 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
         .send("Could not find an activeLeaderboard.");
     }
 
-    const formattedLeaderboardId = ObjectID(activeLeaderboard.id);
-
     let userLeaderboardScore: LeaderboardScore;
 
     userLeaderboardScore = await leaderboardScoreRepo.findOne({
-      where: { userId: "sadsfa", leaderboardId: formattedLeaderboardId },
+      where: {
+        userId: existingUser.id.toString(),
+        leaderboardId: activeLeaderboard.id.toString(),
+      },
     });
+
+    console.log("Found a userLeaderboardScore", userLeaderboardScore, "!");
 
     if (!userLeaderboardScore) {
       console.log("We can't find an existing leaderboard score");
@@ -128,6 +128,9 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
       userLeaderboardScore.userId = existingUser.id.toString();
       userLeaderboardScore.username = existingUser.username;
       userLeaderboardScore.leaderboardId = activeLeaderboard.id.toString();
+      userLeaderboardScore.bodyMovements = 0;
+
+      await leaderboardScoreRepo.save(userLeaderboardScore);
     }
 
     userLeaderboardScore.bodyMovements += userSteps;

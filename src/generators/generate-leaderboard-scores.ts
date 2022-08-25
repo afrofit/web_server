@@ -2,7 +2,7 @@ import { AppDataSource } from "../data-source";
 import { Leaderboard } from "../entity/Leaderboard";
 import { LeaderboardScore } from "./../entity/LeaderboardScore";
 
-const scores = [100, 99, 98, 97, 94, 92, 90, 87, 76, 65, 64, 63, 59, 55, 41];
+const scores = Array.from(Array(200).keys());
 
 const names = [
   "Jayke",
@@ -45,7 +45,7 @@ const names = [
 ];
 
 const LEADERBOARD_ID = "63067992dd3035ba4c2b54af";
-const USER_ID = "62ed06d20f10cb398dfdb754";
+const USER_ID = "randomUserIdsForUsersHere";
 
 const randomNumber = (min: number = 0, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
