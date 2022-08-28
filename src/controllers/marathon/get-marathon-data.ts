@@ -93,8 +93,6 @@ const getMarathonData = async (req: Request, res: Response) => {
       .map((score) => score.name)
       .indexOf(transformedUserScore.name);
 
-    console.log("Datttrr", transformedUserScore, transformedScores);
-
     return res.status(STATUS_CODES.CREATED).send({
       marathon: transformedScores,
       userScore: transformedUserScore,

@@ -1,5 +1,4 @@
 import argon2 from "argon2";
-import { th } from "date-fns/locale";
 import jwt from "jsonwebtoken";
 
 import {
@@ -31,6 +30,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column({ type: "text", nullable: true })
+  password_reset_token: string;
 
   @Column()
   displayPicId: number;
