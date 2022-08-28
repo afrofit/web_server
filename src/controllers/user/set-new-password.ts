@@ -9,6 +9,8 @@ import validateSetNewPassword from "./validation/set-new-password";
 const setNewPassword = async (req: Request, res: Response) => {
   const { error } = validateSetNewPassword(req.body);
 
+  console.log("ReqBody", req.body);
+
   if (error)
     return res.status(STATUS_CODES.BAD_REQUEST).send(error.details[0].message);
 

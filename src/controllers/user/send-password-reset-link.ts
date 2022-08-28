@@ -29,7 +29,7 @@ const sendPasswordResetLink = async (req: Request, res: Response) => {
     existingUser.password_reset_token = hash;
     await usersRepo.save(existingUser);
 
-    const resetLink = `${process.env.CLIENT_URL}/change-password/${existingUser.id}/${hash}`;
+    const resetLink = `${process.env.CLIENT_URL}/set-new-password/${existingUser.id}/${hash}`;
 
     // Email this link
     console.log("resetLink", resetLink);
