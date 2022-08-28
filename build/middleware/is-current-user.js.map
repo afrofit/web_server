@@ -1,0 +1,1 @@
+{"version":3,"file":"is-current-user.js","sourceRoot":"","sources":["../../src/middleware/is-current-user.ts"],"names":[],"mappings":";;AACA,sDAAqD;AAErD,IAAM,aAAa,GAAG,UAAC,GAAY,EAAE,GAAa,EAAE,IAAkB;IACpE,IAAI,CAAC,GAAG,CAAC,WAAY;QACnB,OAAO,GAAG,CAAC,MAAM,CAAC,2BAAY,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,mBAAmB,CAAC,CAAC;IACtE,IAAI,EAAE,CAAC;AACT,CAAC,CAAC;AAEF,kBAAe,aAAa,CAAC"}
