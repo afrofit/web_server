@@ -50,7 +50,8 @@
     "uuidv4": "^6.2.13"
   },
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "node build/index.js",
+    "dev-start": "ts-node src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs",
     "ts-dev": "ts-node-dev src/index.ts",
     "watch": "tsc -w",
