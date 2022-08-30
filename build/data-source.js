@@ -28,9 +28,9 @@ exports.AppDataSource = new typeorm_1.DataSource({
     entities: ["build/entity/**/*.js"],
     migrations: ["build/migrations/**/*.js"],
     subscribers: ["build/subscribers/**/*.js"],
-    port: 27017,
+    // port: 27017,
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    dropSchema: true,
+    // dropSchema: true,
 });
 //# sourceMappingURL=data-source.js.map
