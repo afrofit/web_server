@@ -4,6 +4,7 @@
   "description": "Afrofit Backend NodeJs / Typescript",
   "type": "commonjs",
   "main": "build.index.js",
+  "license": "MIT",
   "devDependencies": {
     "@types/argon2": "^0.15.0",
     "@types/body-parser": "^1.19.2",
