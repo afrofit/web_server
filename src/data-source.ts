@@ -3,7 +3,7 @@ import { DataSource } from "typeorm";
 
 export const AppDataSource = new DataSource({
   type: "mongodb",
-  // url: process.env.MONGO_URL,
+  url: process.env.MONGO_URL,
   synchronize: false,
   logging: false,
   entities: ["build/entity/**/*.js"],
