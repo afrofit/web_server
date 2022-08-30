@@ -68,12 +68,12 @@ var stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY, {
 });
 exports.stripe = stripe;
 /* Routes */
-app.use("api/users", user_1.userRoutes);
-app.use("api/performance", performance_1.performanceRoutes);
-app.use("api/marathon", marathon_1.marathonRoutes);
-app.use("api/payments", payments_1.paymentRoutes);
+app.use("/api/users", user_1.userRoutes);
+app.use("/api/performance", performance_1.performanceRoutes);
+app.use("/api/marathon", marathon_1.marathonRoutes);
+app.use("/api/payments", payments_1.paymentRoutes);
 /* Catch-Alls */
-app.get("api/", function (req, res) {
+app.get("/api", function (req, res) {
     return res.send("Welcome to a Afrofit API.");
 });
 app.all("*", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
