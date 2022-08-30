@@ -8,6 +8,8 @@ export const checkLeaderboard = async () => {
   const existingLeaderboards = await leaderboardRepo.find();
 
   if (!existingLeaderboards || existingLeaderboards.length < 1) {
-    createWeeklyLeaderboard();
+    const leaderboard = await createWeeklyLeaderboard();
+
+    console.log("leadboard", leaderboard);
   }
 };

@@ -31,5 +31,5 @@ export const AppDataSource = new DataSource({
   useNewUrlParser: true,
   useUnifiedTopology: true,
 
-  // dropSchema: true,
+  dropSchema: true,
 });
