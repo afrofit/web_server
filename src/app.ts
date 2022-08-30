@@ -30,14 +30,14 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 /* Routes */
 
-app.use("/users", userRoutes);
-app.use("/performance", performanceRoutes);
-app.use("/marathon", marathonRoutes);
-app.use("/payments", paymentRoutes);
+app.use("api/users", userRoutes);
+app.use("api/performance", performanceRoutes);
+app.use("api/marathon", marathonRoutes);
+app.use("api/payments", paymentRoutes);
 
 /* Catch-Alls */
 
-app.get("/", (req: Request, res: Response) => {
+app.get("api/", (req: Request, res: Response) => {
   return res.send("Welcome to a Afrofit API.");
 });
 
