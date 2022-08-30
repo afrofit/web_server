@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Afrofit Backend NodeJs / Typescript",
   "type": "commonjs",
+  "main": "build.index.js",
   "devDependencies": {
     "@types/argon2": "^0.15.0",
     "@types/body-parser": "^1.19.2",
@@ -50,7 +51,9 @@
     "uuidv4": "^6.2.13"
   },
   "scripts": {
-    "start": "tsc && node build/index.js",
+    "build": "tsc",
+    "start": "yarn build && node build/index.js",
+    "ignite": "node build/index.js",
     "dev-start": "ts-node src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs",
     "ts-dev": "ts-node-dev src/index.ts",

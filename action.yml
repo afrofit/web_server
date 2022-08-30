@@ -1,0 +1,7 @@
+name: "Build to Production"
+author: "Paddy Odebiyi"
+description: "Custom Github action that writes build folder to production branch"
+
+runs:
+  using: "node16"
+  main: "build/index.js"
