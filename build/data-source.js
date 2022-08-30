@@ -5,7 +5,7 @@ require("reflect-metadata");
 var typeorm_1 = require("typeorm");
 exports.AppDataSource = new typeorm_1.DataSource({
     type: "mongodb",
-    url: process.env.MONGO_URL,
+    // url: process.env.MONGO_URL,
     synchronize: false,
     logging: false,
     entities: ["build/entity/**/*.js"],
