@@ -76,7 +76,7 @@ app.use("/api/payments", payments_1.paymentRoutes);
 app.get("/api", function (req, res) {
     return res.send("Welcome to a Afrofit API.");
 });
-app.all("*", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+app.all("/*", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, res
                 .status(status_codes_1.STATUS_CODES.BAD_REQUEST)

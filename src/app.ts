@@ -41,7 +41,7 @@ app.get("/api", (req: Request, res: Response) => {
   return res.send("Welcome to a Afrofit API.");
 });
 
-app.all("*", async (req: Request, res: Response) => {
+app.all("/*", async (req: Request, res: Response) => {
   return res
     .status(STATUS_CODES.BAD_REQUEST)
     .send("Sorry. Nothing lives here.");
