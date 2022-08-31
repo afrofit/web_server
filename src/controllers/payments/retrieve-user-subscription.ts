@@ -38,7 +38,7 @@ const retrieveUserSubscription = async (req: Request, res: Response) => {
     console.error(error);
     return res
       .status(STATUS_CODES.INTERNAL_ERROR)
-      .send("An error occured trying to create a stripe session.");
+      .send("An error occured trying to retrieve a stripe session.");
   }
 };
 

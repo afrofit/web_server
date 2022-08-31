@@ -74,7 +74,7 @@ var retrieveUserSubscription = function (req, res) { return __awaiter(void 0, vo
                 console.error(error_1);
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)
-                        .send("An error occured trying to create a stripe session.")];
+                        .send("An error occured trying to retrieve a stripe session.")];
             case 5: return [2 /*return*/];
         }
     });

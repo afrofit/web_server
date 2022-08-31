@@ -87,7 +87,7 @@ var retrieveStripeSession = function (req, res) { return __awaiter(void 0, void 
                 console.error(error_1);
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)
-                        .send("An error occured trying to create a stripe session.")];
+                        .send("An error occured trying to retrieve a stripe session.")];
             case 7: return [2 /*return*/];
         }
     });
