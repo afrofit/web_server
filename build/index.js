@@ -55,7 +55,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var seeder_1 = require("./generators/seeder");
 require("reflect-metadata");
 var dotenv = __importStar(require("dotenv"));
 dotenv.config({ path: __dirname + "/.env" });
@@ -63,6 +62,7 @@ var app_1 = require("./app");
 var data_source_1 = require("./data-source");
 var cron_weekly_leaderboard_1 = require("./jobs/cron-weekly-leaderboard");
 var check_leaderboard_1 = require("./generators/check-leaderboard");
+var seeder_1 = require("./generators/seeder");
 var start = function () { return __awaiter(void 0, void 0, void 0, function () {
     var PORT, dataConnection, error_1;
     return __generator(this, function (_a) {
@@ -81,12 +81,12 @@ var start = function () { return __awaiter(void 0, void 0, void 0, function () {
                 return [4 /*yield*/, (0, check_leaderboard_1.checkLeaderboard)()];
             case 3:
                 _a.sent();
-                // seed the DB
+                // seed the Database
                 return [4 /*yield*/, (0, seeder_1.seeder)()];
             case 4:
-                // seed the DB
+                // seed the Database
                 _a.sent();
-                // Cron job that creates weekly leaderboard
+                // Cron job that creates weekly leaderboards for users
                 return [2 /*return*/, cron_weekly_leaderboard_1.createWeeklyLeaderboardJob.start()];
             case 5: return [3 /*break*/, 7];
             case 6:

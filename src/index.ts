@@ -1,11 +1,12 @@
-import { seeder } from "./generators/seeder";
 import "reflect-metadata";
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
+
 import { app } from "./app";
 import { AppDataSource } from "./data-source";
 import { createWeeklyLeaderboardJob } from "./jobs/cron-weekly-leaderboard";
 import { checkLeaderboard } from "./generators/check-leaderboard";
+import { seeder } from "./generators/seeder";
 
 const start = async () => {
   const PORT = process.env.PORT || 9090;
@@ -19,10 +20,10 @@ const start = async () => {
 
       await checkLeaderboard();
 
-      // seed the DB
+      // seed the Database
       await seeder();
 
-      // Cron job that creates weekly leaderboard
+      // Cron job that creates weekly leaderboards for users
       return createWeeklyLeaderboardJob.start();
     }
   } catch (error) {
