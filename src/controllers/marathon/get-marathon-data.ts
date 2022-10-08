@@ -8,19 +8,6 @@ import { STATUS_CODES } from "../../types/status-codes";
 import { createWeeklyLeaderboard } from "../functions/create-weekly-leaderboard";
 import { User } from "../../entity/User";
 
-const mockData = [
-  { name: "GurgyWurgy", score: 9999 },
-  { name: "ChinEye007", score: 9990 },
-  { name: "RubeyRubey", score: 9980 },
-  { name: "ScoobyDoo", score: 9970 },
-  { name: "ScrappyDoo", score: 9960 },
-  { name: "Paschalle", score: 9920 },
-  { name: "Giannah_009", score: 9910 },
-  { name: "Petreschu", score: 9900 },
-  { name: "Pandlish", score: 9800 },
-  { name: "Scarmonger_065", score: 8009 },
-];
-
 const getMarathonData = async (req: Request, res: Response) => {
   const { userId } = req.params;
 
@@ -54,6 +41,8 @@ const getMarathonData = async (req: Request, res: Response) => {
       skip: 0,
       take: LOWER_LIMIT,
     });
+
+    console.log("leaderboardScores", leaderboardScores);
 
     let userLeaderboardScore = await leaderboardScoresRepo.findOne({
       where: {
