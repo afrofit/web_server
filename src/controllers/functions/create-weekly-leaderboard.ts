@@ -15,10 +15,15 @@ export const createWeeklyLeaderboard = async () => {
     if (existingLeaderboards.length > 0) {
       const existingLeaderboard = existingLeaderboards[0];
 
-      if (
+      const condition =
         isAfter(existingLeaderboard.endDate, TODAY) &&
-        isBefore(existingLeaderboard.startDate, TODAY)
-      ) {
+        isBefore(existingLeaderboard.startDate, TODAY);
+
+      console.log("existingLeaderboard", existingLeaderboard);
+
+      console.log("Leaderboard condition", condition);
+
+      if (condition) {
         return existingLeaderboard;
       } else {
         const newLeaderboard = new Leaderboard();
