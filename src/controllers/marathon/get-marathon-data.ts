@@ -51,8 +51,6 @@ const getMarathonData = async (req: Request, res: Response) => {
       },
     });
 
-    console.log("userLeaderboardScore", userLeaderboardScore);
-
     if (!userLeaderboardScore) {
       userLeaderboardScore = new LeaderboardScore();
       userLeaderboardScore.bodyMovements = 0;
@@ -64,6 +62,8 @@ const getMarathonData = async (req: Request, res: Response) => {
       await leaderboardScoresRepo.save(userLeaderboardScore);
     }
 
+    console.log("userLeaderboardScore", userLeaderboardScore);
+
     const transformedScores = leaderboardScores.map((score) => {
       return {
         name: score.username,
@@ -72,11 +72,15 @@ const getMarathonData = async (req: Request, res: Response) => {
       };
     });
 
+    console.log("transformedScores", transformedScores);
+
     const transformedUserScore = {
       name: userLeaderboardScore.username,
       userId: userLeaderboardScore.userId,
       score: userLeaderboardScore.bodyMovements,
     };
+
+    console.log("transformedUserScore", transformedUserScore);
 
     const userScoreIndex = transformedScores
       .map((score) => score.name)
