@@ -8,6 +8,7 @@ import { STATUS_CODES } from "../../types/status-codes";
 import validateCreateUser from "./validation/create-user";
 import { User } from "../../entity/User";
 import { CreateUserRequestType } from "./types/create-user-request-type";
+import { nodeMailerTransporter } from "../../config";
 
 const createUser = async (req: Request, res: Response) => {
   const { error } = validateCreateUser(req.body);
@@ -72,6 +73,26 @@ const createUser = async (req: Request, res: Response) => {
     await todaysActivityRepo.save(todaysActivity);
 
     const token = user.generateToken();
+
+    //Send email
+    const mailOptions = {
+      from: `"Afrofit Member Services" <${process.env.EMAIL_USER}>`, // sender address
+      to: user.email,
+      subject: "Welcome!",
+      template: "new_user",
+      context: {
+        name: user.username,
+        adminEmail: "afrofitapp@gmail.com",
+      },
+    };
+
+    /** Let's really send the email now! */
+    nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        return console.log(error);
+      }
+      console.log("Message sent: " + info.response);
+    });
 
     return res
       .status(STATUS_CODES.CREATED)

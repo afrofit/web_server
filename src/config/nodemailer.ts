@@ -26,4 +26,4 @@ const handlebarOptions: any = {
 // use a template file with nodemailer
 transporter.use("compile", hbs(handlebarOptions));
 
-export { transporter };
+export default transporter;
