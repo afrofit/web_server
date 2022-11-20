@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import _ from "lodash";
 import { uuid } from "uuidv4";
-import { transporter } from "../../config/nodemailer";
 
 import { AppDataSource } from "../../data-source";
 import { User } from "../../entity/User";
 import { STATUS_CODES } from "../../types/status-codes";
 import validateResetLink from "./validation/send-password-reset-link";
+import { nodeMailerTransporter } from "../../config";
 
 const sendPasswordResetLink = async (req: Request, res: Response) => {
   const { error } = validateResetLink(req.body);
@@ -46,7 +46,7 @@ const sendPasswordResetLink = async (req: Request, res: Response) => {
     };
 
     // trigger the sending of the E-mail
-    transporter.sendMail(mailOptions, function (error, info) {
+    nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         return console.log(error);
       }

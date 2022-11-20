@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../../data-source";
 import { User } from "../../entity/User";
 import { ObjectID } from "mongodb";
-import { transporter } from "../../config/nodemailer";
+import { nodeMailerTransporter } from "../../config";
 import { STATUS_CODES } from "../../types/status-codes";
 import validateSetNewPassword from "./validation/set-new-password";
 
@@ -49,7 +49,7 @@ const setNewPassword = async (req: Request, res: Response) => {
     };
 
     // trigger the sending of the E-mail
-    transporter.sendMail(mailOptions, function (error, info) {
+    nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         return console.log(error);
       }
