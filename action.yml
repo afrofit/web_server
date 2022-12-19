@@ -5,7 +5,7 @@ description: "Custom Github action that writes build folder to production branch
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "public/**"
 
