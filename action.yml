@@ -3,14 +3,8 @@ author: "Paddy Odebiyi"
 description: "Custom Github action that writes build folder to production branch"
 
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - "public/**"
-  pull_request:
-    paths-ignore:
-      - "public/**"
+  paths-ignore:
+    - "public/image/**"
 
 runs:
   using: "node16"
