@@ -42,7 +42,7 @@ var data_source_1 = require("../../data-source");
 var User_1 = require("../../entity/User");
 var status_codes_1 = require("../../types/status-codes");
 var retrieveUserSubscription = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, formattedUserId, usersRepo, existingUser, subscription, isActive, error_1;
+    var userId, formattedUserId, usersRepo, existingUser, subscription, isActive, endDate, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -66,9 +66,15 @@ var retrieveUserSubscription = function (req, res) { return __awaiter(void 0, vo
                 return [4 /*yield*/, app_1.stripe.subscriptions.retrieve(existingUser.lastActiveSubscriptionId)];
             case 3:
                 subscription = _a.sent();
-                console.log("subscription", subscription);
-                isActive = subscription.status === "active";
-                return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.OK).send({ activeSubscription: isActive })];
+                isActive = false;
+                if (subscription.status === "active" ||
+                    subscription.status === "trialing") {
+                    isActive = true;
+                }
+                endDate = new Date(subscription.current_period_end * 1000);
+                return [2 /*return*/, res
+                        .status(status_codes_1.STATUS_CODES.OK)
+                        .send({ activesSubscription: isActive, endDate: endDate })];
             case 4:
                 error_1 = _a.sent();
                 console.error(error_1);

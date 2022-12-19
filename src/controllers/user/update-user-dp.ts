@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import _ from "lodash";
 import { ObjectID } from "mongodb";
+import { unlinkSync } from "fs";
 
 import { AppDataSource } from "./../../data-source";
 
@@ -9,10 +10,12 @@ import { User } from "../../entity/User";
 import validateUpdateUserDp from "./validation/update-user-dp";
 
 const updateUserDp = async (req: Request, res: Response) => {
-  const { error } = validateUpdateUserDp(req.body);
+  console.log(`req.file: ${req.file}`);
 
-  if (error)
-    return res.status(STATUS_CODES.BAD_REQUEST).send(error.details[0].message);
+  // const { error } = validateUpdateUserDp(req.body);
+
+  // if (error)
+  //   return res.status(STATUS_CODES.BAD_REQUEST).send(error.details[0].message);
 
   const { userId } = req.params;
 
@@ -32,16 +35,28 @@ const updateUserDp = async (req: Request, res: Response) => {
         .send("There is a curious issue with your account");
 
     /** Now let's update a user */
-    existingUser.displayPicId = displayPicId;
+    if (displayPicId) {
+      existingUser.displayPicId = displayPicId;
+      if (existingUser.imageUrl)
+        unlinkSync(`./public/${existingUser.imageUrl}`);
+      existingUser.imageUrl = "";
+    }
 
-    await usersRepo.save(existingUser);
+    if (req.file) {
+      if (existingUser.imageUrl)
+        unlinkSync(`./public/${existingUser.imageUrl}`);
+      existingUser.imageUrl = `image/${req.file.filename}`;
+      existingUser.displayPicId = 0;
+    }
+
+    const user = await usersRepo.save(existingUser);
 
     const token = existingUser.generateToken();
 
     return res
       .status(STATUS_CODES.OK)
       .header(process.env.TOKEN_HEADER, token)
-      .send({ token });
+      .send({ data: user, token });
   } catch (error) {
     console.error(error);
     return res

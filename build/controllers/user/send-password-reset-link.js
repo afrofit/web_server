@@ -40,11 +40,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var uuidv4_1 = require("uuidv4");
-var nodemailer_1 = require("../../config/nodemailer");
 var data_source_1 = require("../../data-source");
 var User_1 = require("../../entity/User");
 var status_codes_1 = require("../../types/status-codes");
 var send_password_reset_link_1 = __importDefault(require("./validation/send-password-reset-link"));
+var config_1 = require("../../config");
 var sendPasswordResetLink = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var error, email, usersRepo, existingUser, hash, resetLink, mailOptions, error_1;
     return __generator(this, function (_a) {
@@ -82,7 +82,7 @@ var sendPasswordResetLink = function (req, res) { return __awaiter(void 0, void 
                     },
                 };
                 // trigger the sending of the E-mail
-                nodemailer_1.transporter.sendMail(mailOptions, function (error, info) {
+                config_1.nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
                         return console.log(error);
                     }

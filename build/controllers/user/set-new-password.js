@@ -42,7 +42,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var data_source_1 = require("../../data-source");
 var User_1 = require("../../entity/User");
 var mongodb_1 = require("mongodb");
-var nodemailer_1 = require("../../config/nodemailer");
+var config_1 = require("../../config");
 var status_codes_1 = require("../../types/status-codes");
 var set_new_password_1 = __importDefault(require("./validation/set-new-password"));
 var setNewPassword = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -88,7 +88,7 @@ var setNewPassword = function (req, res) { return __awaiter(void 0, void 0, void
                     },
                 };
                 // trigger the sending of the E-mail
-                nodemailer_1.transporter.sendMail(mailOptions, function (error, info) {
+                config_1.nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
                         return console.log(error);
                     }

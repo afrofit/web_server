@@ -8,7 +8,7 @@ import { STATUS_CODES } from "../../types/status-codes";
 import validateCreateUser from "./validation/create-user";
 import { User } from "../../entity/User";
 import { CreateUserRequestType } from "./types/create-user-request-type";
-import { nodeMailerTransporter } from "../../config";
+// import { nodeMailerTransporter } from "../../config";
 
 const createUser = async (req: Request, res: Response) => {
   const { error } = validateCreateUser(req.body);
@@ -49,6 +49,7 @@ const createUser = async (req: Request, res: Response) => {
     user.lastName = lastName;
     user.firstName = firstName;
     user.displayPicId = displayPicId;
+    if (req.file) user.imageUrl = `image/${req.file.filename}`;
 
     await usersRepo.save(user);
 
@@ -75,29 +76,29 @@ const createUser = async (req: Request, res: Response) => {
     const token = user.generateToken();
 
     //Send email
-    const mailOptions = {
-      from: `"Afrofit Member Services" <${process.env.EMAIL_USER}>`, // sender address
-      to: user.email,
-      subject: "Welcome!",
-      template: "new_user",
-      context: {
-        name: user.username,
-        adminEmail: "afrofitapp@gmail.com",
-      },
-    };
+    // const mailOptions = {
+    //   from: `"Afrofit Member Services" <${process.env.EMAIL_USER}>`, // sender address
+    //   to: user.email,
+    //   subject: "Welcome!",
+    //   template: "new_user",
+    //   context: {
+    //     name: user.username,
+    //     adminEmail: "afrofitapp@gmail.com",
+    //   },
+    // };
 
     /** Let's really send the email now! */
-    nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        return console.log(error);
-      }
-      console.log("Message sent: " + info.response);
-    });
+    // nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
+    //   if (error) {
+    //     return console.log(error);
+    //   }
+    //   console.log("Message sent: " + info.response);
+    // });
 
     return res
       .status(STATUS_CODES.CREATED)
       .header(process.env.TOKEN_HEADER, token)
-      .send({ token });
+      .send({ token, id: user.id, email: user.email });
   } catch (error) {
     console.error(error);
     return res

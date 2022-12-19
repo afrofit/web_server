@@ -72,7 +72,7 @@ var loginUser = function (req, res) { return __awaiter(void 0, void 0, void 0, f
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.OK)
                         .header(process.env.TOKEN_HEADER, token)
-                        .send({ token: token })];
+                        .send({ token: token, data: user })];
             case 4:
                 error_1 = _b.sent();
                 console.error(error_1);

@@ -33,7 +33,7 @@ const loginUser = async (req: Request, res: Response) => {
     return res
       .status(STATUS_CODES.OK)
       .header(process.env.TOKEN_HEADER, token)
-      .send({ token });
+      .send({ token, data: user });
   } catch (error) {
     console.error(error);
     return res

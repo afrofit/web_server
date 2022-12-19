@@ -37,7 +37,7 @@ const cancelUserSubscription = async (req: Request, res: Response) => {
       existingUser.stripeCustomerId ||
       existingUser.lastActiveSubscriptionId
     ) {
-      existingUser.stripeCustomerId = null;
+      // existingUser.stripeCustomerId = null;
       existingUser.lastActiveSubscriptionId = null;
       await usersRepo.save(existingUser);
     }

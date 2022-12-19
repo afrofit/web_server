@@ -9,8 +9,8 @@ var validateCreateUser = function (userData) {
         email: joi_1.default.string().required().email(),
         password: joi_1.default.string().required().min(6).max(255),
         username: joi_1.default.string().min(3).max(25),
-        firstName: joi_1.default.string().required().min(6).max(255),
-        lastName: joi_1.default.string().required().min(6).max(255),
+        firstName: joi_1.default.string().required().min(2).max(255),
+        lastName: joi_1.default.string().required().min(2).max(255),
         displayPicId: joi_1.default.number().min(1).max(16),
     });
     return schema.validate(userData);

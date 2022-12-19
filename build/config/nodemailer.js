@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.transporter = void 0;
 var nodemailer_express_handlebars_1 = __importDefault(require("nodemailer-express-handlebars"));
 var nodemailer_1 = __importDefault(require("nodemailer"));
 var path_1 = __importDefault(require("path"));
@@ -18,7 +17,6 @@ var transporter = nodemailer_1.default.createTransport({
         rejectUnauthorized: false,
     },
 });
-exports.transporter = transporter;
 // point to the template folder
 var handlebarOptions = {
     viewEngine: {
@@ -29,4 +27,5 @@ var handlebarOptions = {
 };
 // use a template file with nodemailer
 transporter.use("compile", (0, nodemailer_express_handlebars_1.default)(handlebarOptions));
+exports.default = transporter;
 //# sourceMappingURL=nodemailer.js.map
