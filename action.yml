@@ -2,8 +2,15 @@ name: "Build to Production"
 author: "Paddy Odebiyi"
 description: "Custom Github action that writes build folder to production branch"
 
-ignore:
-  - "**/public"
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "public/**"
+  pull_request:
+    paths-ignore:
+      - "public/**"
 
 runs:
   using: "node16"
