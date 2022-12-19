@@ -13,6 +13,7 @@ const retrieveUserSubscription = async (req: Request, res: Response) => {
 
   try {
     const usersRepo = AppDataSource.getMongoRepository(User);
+
     const existingUser = await usersRepo.findOneBy({
       where: { _id: formattedUserId },
     });
@@ -29,11 +30,19 @@ const retrieveUserSubscription = async (req: Request, res: Response) => {
       existingUser.lastActiveSubscriptionId
     );
 
-    console.log("subscription", subscription);
+    let isActive = false;
 
-    const isActive = subscription.status === "active";
+    if (
+      subscription.status === "active" ||
+      subscription.status === "trialing"
+    ) {
+      isActive = true;
+    }
 
-    return res.status(STATUS_CODES.OK).send({ activeSubscription: isActive });
+    const endDate = new Date(subscription.current_period_end * 1000);
+    return res
+      .status(STATUS_CODES.OK)
+      .send({ activesSubscription: isActive, endDate });
   } catch (error) {
     console.error(error);
     return res

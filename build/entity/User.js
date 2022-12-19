@@ -73,6 +73,7 @@ var User = /** @class */ (function () {
             displayPicId: this.displayPicId,
             joinDate: this.createdAt,
             lastStoryCompleted: this.lastStoryCompleted,
+            imageUrl: this.imageUrl,
         }, process.env.TOKEN_SECRET);
         return token;
     };
@@ -121,6 +122,10 @@ var User = /** @class */ (function () {
         (0, typeorm_1.Column)(),
         __metadata("design:type", String)
     ], User.prototype, "lastName", void 0);
+    __decorate([
+        (0, typeorm_1.Column)({ default: "" }),
+        __metadata("design:type", String)
+    ], User.prototype, "imageUrl", void 0);
     __decorate([
         (0, typeorm_1.Column)(),
         __metadata("design:type", String)

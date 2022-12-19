@@ -28,6 +28,9 @@ export class User {
   @Column()
   lastName: string;
 
+  @Column({ default: "" })
+  imageUrl: string;
+
   @Column()
   password: string;
 
@@ -76,6 +79,7 @@ export class User {
         displayPicId: this.displayPicId,
         joinDate: this.createdAt,
         lastStoryCompleted: this.lastStoryCompleted,
+        imageUrl: this.imageUrl,
       },
       process.env.TOKEN_SECRET!
     );

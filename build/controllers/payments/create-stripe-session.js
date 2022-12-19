@@ -46,54 +46,65 @@ var User_1 = require("../../entity/User");
 var status_codes_1 = require("../../types/status-codes");
 var create_stripe_session_1 = __importDefault(require("./validation/create-stripe-session"));
 var createStripeSession = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var error, userId, email, formattedUserId, usersRepo, existingUser, session, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var error, userId, _a, priceId, email, formattedUserId, usersRepo, existingUser, customer, data, session, error_1;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 error = (0, create_stripe_session_1.default)(req.body).error;
                 if (error)
                     return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.BAD_REQUEST).send(error.details[0].message)];
                 userId = req.params.userId;
-                email = req.body.email;
+                _a = req.body, priceId = _a.priceId, email = _a.email;
                 formattedUserId = (0, mongodb_1.ObjectID)(userId);
-                _a.label = 1;
+                _b.label = 1;
             case 1:
-                _a.trys.push([1, 4, , 5]);
+                _b.trys.push([1, 6, , 7]);
                 usersRepo = data_source_1.AppDataSource.getMongoRepository(User_1.User);
                 return [4 /*yield*/, usersRepo.findOneBy({
                         where: { _id: formattedUserId },
                     })];
             case 2:
-                existingUser = _a.sent();
+                existingUser = _b.sent();
                 if (!existingUser)
                     return [2 /*return*/, res
                             .status(status_codes_1.STATUS_CODES.BAD_REQUEST)
                             .send("We can't quite find your user details.")];
-                return [4 /*yield*/, app_1.stripe.checkout.sessions.create({
-                        payment_method_types: ["card"],
-                        // ...(existingUser.stripeCustomerId && {
-                        //   customer: existingUser.stripeCustomerId,
-                        // }),
-                        mode: "subscription",
-                        success_url: process.env.CLIENT_URL + "/payments/success?id={CHECKOUT_SESSION_ID}",
-                        cancel_url: process.env.CLIENT_URL + "/payments/cancel?id={CHECKOUT_SESSION_ID}",
-                        line_items: [
-                            {
-                                quantity: 1,
-                                price: process.env.PRODUCT_ID,
-                            },
-                        ],
+                if (!!existingUser.stripeCustomerId) return [3 /*break*/, 4];
+                return [4 /*yield*/, app_1.stripe.customers.create({
+                        email: email,
                     })];
             case 3:
-                session = _a.sent();
-                return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.CREATED).send({ sessionId: session.id })];
+                customer = _b.sent();
+                existingUser.stripeCustomerId = customer.id;
+                _b.label = 4;
             case 4:
-                error_1 = _a.sent();
+                data = {
+                    customer: existingUser.stripeCustomerId,
+                    payment_method_types: ["card"],
+                    line_items: [
+                        {
+                            quantity: 1,
+                            price: priceId,
+                        },
+                    ],
+                    mode: "subscription",
+                    subscription_data: {
+                        trial_period_days: process.env.TRIAL_DAYS,
+                    },
+                    success_url: "".concat(process.env.CLIENT_URL, "/about?id={CHECKOUT_SESSION_ID}"),
+                    cancel_url: "".concat(process.env.CLIENT_URL, "/plan?id={CHECKOUT_SESSION_ID}"),
+                };
+                return [4 /*yield*/, app_1.stripe.checkout.sessions.create(data)];
+            case 5:
+                session = _b.sent();
+                return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.CREATED).send({ sessionId: session.id })];
+            case 6:
+                error_1 = _b.sent();
                 console.error(error_1);
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)
                         .send("An error occured trying to create a stripe session.")];
-            case 5: return [2 /*return*/];
+            case 7: return [2 /*return*/];
         }
     });
 }); };

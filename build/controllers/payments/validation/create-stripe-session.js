@@ -7,6 +7,7 @@ var joi_1 = __importDefault(require("joi"));
 var validateCreateStripeSession = function (email) {
     var schema = joi_1.default.object({
         email: joi_1.default.string().required().email(),
+        priceId: joi_1.default.string().required(),
     });
     return schema.validate(email);
 };

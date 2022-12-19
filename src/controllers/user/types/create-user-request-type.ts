@@ -5,4 +5,5 @@ export type CreateUserRequestType = {
   password: string;
   username: string;
   displayPicId: number;
+  imageUrl: string;
 };

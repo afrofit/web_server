@@ -69,7 +69,7 @@ var cancelUserSubscription = function (req, res) { return __awaiter(void 0, void
                 isActive = subscription.status === "active";
                 if (!(existingUser.stripeCustomerId ||
                     existingUser.lastActiveSubscriptionId)) return [3 /*break*/, 5];
-                existingUser.stripeCustomerId = null;
+                // existingUser.stripeCustomerId = null;
                 existingUser.lastActiveSubscriptionId = null;
                 return [4 /*yield*/, usersRepo.save(existingUser)];
             case 4:

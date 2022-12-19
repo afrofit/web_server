@@ -18,10 +18,17 @@ const app = express();
 app.set("trust proxy", true);
 app.use(json());
 app.use(logger("dev"));
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
 app.use(cookieParser());
 
 app.use(cors());
+
+// for parsing multipart/form-data
+app.use(express.static("public"));
 
 /* Stripe Setup */
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {

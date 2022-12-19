@@ -45,6 +45,7 @@ var data_source_1 = require("./../../data-source");
 var status_codes_1 = require("../../types/status-codes");
 var create_user_1 = __importDefault(require("./validation/create-user"));
 var User_1 = require("../../entity/User");
+// import { nodeMailerTransporter } from "../../config";
 var createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var error, _a, lastName, firstName, username, email, displayPicId, password, usersRepo, existingUsername, existingUserEmail, user, todaysActivityRepo, performanceRepo, todaysActivity, performanceData, token, error_1;
     return __generator(this, function (_b) {
@@ -79,6 +80,8 @@ var createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                 user.lastName = lastName;
                 user.firstName = firstName;
                 user.displayPicId = displayPicId;
+                if (req.file)
+                    user.imageUrl = "image/".concat(req.file.filename);
                 return [4 /*yield*/, usersRepo.save(user)];
             case 4:
                 _b.sent();
@@ -101,10 +104,28 @@ var createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
             case 6:
                 _b.sent();
                 token = user.generateToken();
+                //Send email
+                // const mailOptions = {
+                //   from: `"Afrofit Member Services" <${process.env.EMAIL_USER}>`, // sender address
+                //   to: user.email,
+                //   subject: "Welcome!",
+                //   template: "new_user",
+                //   context: {
+                //     name: user.username,
+                //     adminEmail: "afrofitapp@gmail.com",
+                //   },
+                // };
+                /** Let's really send the email now! */
+                // nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
+                //   if (error) {
+                //     return console.log(error);
+                //   }
+                //   console.log("Message sent: " + info.response);
+                // });
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.CREATED)
                         .header(process.env.TOKEN_HEADER, token)
-                        .send({ token: token })];
+                        .send({ token: token, id: user.id, email: user.email })];
             case 7:
                 error_1 = _b.sent();
                 console.error(error_1);

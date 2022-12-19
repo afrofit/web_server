@@ -42,7 +42,7 @@ var data_source_1 = require("../../data-source");
 var Leaderboard_1 = require("../../entity/Leaderboard");
 var TODAY = new Date();
 var createWeeklyLeaderboard = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var leaderboardRepo, existingLeaderboards, existingLeaderboard, newLeaderboard_1, newLeaderboard, error_1;
+    var leaderboardRepo, existingLeaderboards, existingLeaderboard, condition, newLeaderboard_1, newLeaderboard, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -57,8 +57,11 @@ var createWeeklyLeaderboard = function () { return __awaiter(void 0, void 0, voi
                 existingLeaderboards = _a.sent();
                 if (!(existingLeaderboards.length > 0)) return [3 /*break*/, 5];
                 existingLeaderboard = existingLeaderboards[0];
-                if (!((0, date_fns_1.isAfter)(existingLeaderboard.endDate, TODAY) &&
-                    (0, date_fns_1.isBefore)(existingLeaderboard.startDate, TODAY))) return [3 /*break*/, 3];
+                condition = (0, date_fns_1.isAfter)(existingLeaderboard.endDate, TODAY) &&
+                    (0, date_fns_1.isBefore)(existingLeaderboard.startDate, TODAY);
+                console.log("existingLeaderboard", existingLeaderboard);
+                console.log("Leaderboard condition", condition);
+                if (!condition) return [3 /*break*/, 3];
                 return [2 /*return*/, existingLeaderboard];
             case 3:
                 newLeaderboard_1 = new Leaderboard_1.Leaderboard();
