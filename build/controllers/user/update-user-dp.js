@@ -65,14 +65,18 @@ var updateUserDp = function (req, res) { return __awaiter(void 0, void 0, void 0
                             .send("There is a curious issue with your account")];
                 /** Now let's update a user */
                 if (displayPicId) {
+                    if (existingUser.imageUrl) {
+                        if ((0, fs_1.existsSync)("./public/".concat(existingUser.imageUrl)))
+                            (0, fs_1.unlinkSync)("./public/".concat(existingUser.imageUrl));
+                    }
                     existingUser.displayPicId = displayPicId;
-                    if (existingUser.imageUrl)
-                        (0, fs_1.unlinkSync)("./public/".concat(existingUser.imageUrl));
                     existingUser.imageUrl = "";
                 }
                 if (req.file) {
-                    if (existingUser.imageUrl)
-                        (0, fs_1.unlinkSync)("./public/".concat(existingUser.imageUrl));
+                    if (existingUser.imageUrl) {
+                        if ((0, fs_1.existsSync)("./public/".concat(existingUser.imageUrl)))
+                            (0, fs_1.unlinkSync)("./public/".concat(existingUser.imageUrl));
+                    }
                     existingUser.imageUrl = "image/".concat(req.file.filename);
                     existingUser.displayPicId = 0;
                 }
