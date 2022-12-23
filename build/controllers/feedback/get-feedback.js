@@ -35,58 +35,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.stripe = exports.app = void 0;
-var express_1 = __importDefault(require("express"));
-require("express-async-errors");
-var body_parser_1 = require("body-parser");
-var helmet_1 = __importDefault(require("helmet"));
-var morgan_1 = __importDefault(require("morgan"));
-var cookie_parser_1 = __importDefault(require("cookie-parser"));
-var cors_1 = __importDefault(require("cors"));
-var status_codes_1 = require("./types/status-codes");
-var user_1 = require("./routes/user");
-var performance_1 = require("./routes/performance");
-var marathon_1 = require("./routes/marathon");
-var payments_1 = require("./routes/payments");
-var feedback_1 = require("./routes/feedback");
-var stripe_1 = __importDefault(require("stripe"));
-/* App Setup */
-var app = (0, express_1.default)();
-exports.app = app;
-app.set("trust proxy", true);
-app.use((0, body_parser_1.json)());
-app.use((0, morgan_1.default)("dev"));
-app.use((0, helmet_1.default)({
-    crossOriginResourcePolicy: false,
-}));
-app.use((0, cookie_parser_1.default)());
-app.use((0, cors_1.default)());
-// for parsing multipart/form-data
-app.use(express_1.default.static("public"));
-/* Stripe Setup */
-var stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2022-08-01",
-});
-exports.stripe = stripe;
-/* Routes */
-app.use("/api/users", user_1.userRoutes);
-app.use("/api/performance", performance_1.performanceRoutes);
-app.use("/api/marathon", marathon_1.marathonRoutes);
-app.use("/api/payments", payments_1.paymentRoutes);
-app.use("/api/feedbacks", feedback_1.feedbackRoutes);
-/* Catch-Alls */
-app.get("/api", function (req, res) {
-    return res.send("Welcome to a Afrofit API.");
-});
-app.all("/*", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var data_source_1 = require("./../../data-source");
+var status_codes_1 = require("../../types/status-codes");
+var Feedback_1 = require("../../entity/Feedback");
+var getFeedback = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var feedbacksRepo, results, error_1;
     return __generator(this, function (_a) {
-        return [2 /*return*/, res
-                .status(status_codes_1.STATUS_CODES.BAD_REQUEST)
-                .send("Sorry. Nothing lives here.")];
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                feedbacksRepo = data_source_1.AppDataSource.getMongoRepository(Feedback_1.Feedback);
+                return [4 /*yield*/, feedbacksRepo.find({ where: { isHide: false } })];
+            case 1:
+                results = _a.sent();
+                return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.CREATED).send(results)];
+            case 2:
+                error_1 = _a.sent();
+                console.error(error_1);
+                return [2 /*return*/, res
+                        .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)
+                        .send("An error occurred trying to create your account.")];
+            case 3: return [2 /*return*/];
+        }
     });
-}); });
-//# sourceMappingURL=app.js.map
+}); };
+exports.default = getFeedback;
+//# sourceMappingURL=get-feedback.js.map
