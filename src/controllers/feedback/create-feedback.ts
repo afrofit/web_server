@@ -17,6 +17,7 @@ const createFeedback = async (req: Request, res: Response) => {
     feedbackData.title = title;
     feedbackData.name = name;
     feedbackData.description = description;
+    feedbackData.isHide = false;
 
     const results = await feedbacksRepo.save(feedbackData);
 

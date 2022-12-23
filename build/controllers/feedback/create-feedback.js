@@ -53,6 +53,7 @@ var createFeedback = function (req, res) { return __awaiter(void 0, void 0, void
                 feedbackData.title = title;
                 feedbackData.name = name;
                 feedbackData.description = description;
+                feedbackData.isHide = false;
                 return [4 /*yield*/, feedbacksRepo.save(feedbackData)];
             case 1:
                 results = _b.sent();
