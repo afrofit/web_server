@@ -36,67 +36,36 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var mongodb_1 = require("mongodb");
-var fs_1 = require("fs");
 var data_source_1 = require("./../../data-source");
 var status_codes_1 = require("../../types/status-codes");
-var User_1 = require("../../entity/User");
-var updateUserDp = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, displayPicId, formattedUserId, usersRepo, existingUser, user, token, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+var Feedback_1 = require("../../entity/Feedback");
+var createFeedback = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, description, title, name, imageUrl, feedbacksRepo, feedbackData, results, error_1;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                console.log("req.file: ".concat(req.file));
-                userId = req.params.userId;
-                displayPicId = req.body.displayPicId;
-                formattedUserId = (0, mongodb_1.ObjectID)(userId);
-                _a.label = 1;
+                _b.trys.push([0, 2, , 3]);
+                _a = req.body, description = _a.description, title = _a.title, name = _a.name;
+                imageUrl = req.file ? "image/".concat(req.file.filename) : "";
+                feedbacksRepo = data_source_1.AppDataSource.getMongoRepository(Feedback_1.Feedback);
+                feedbackData = new Feedback_1.Feedback();
+                feedbackData.imageUrl = imageUrl;
+                feedbackData.title = title;
+                feedbackData.name = name;
+                feedbackData.description = description;
+                return [4 /*yield*/, feedbacksRepo.save(feedbackData)];
             case 1:
-                _a.trys.push([1, 4, , 5]);
-                usersRepo = data_source_1.AppDataSource.getMongoRepository(User_1.User);
-                return [4 /*yield*/, usersRepo.findOneBy({
-                        where: { _id: formattedUserId },
-                    })];
+                results = _b.sent();
+                return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.CREATED).send(results)];
             case 2:
-                existingUser = _a.sent();
-                if (!existingUser)
-                    return [2 /*return*/, res
-                            .status(status_codes_1.STATUS_CODES.BAD_REQUEST)
-                            .send("There is a curious issue with your account")];
-                /** Now let's update a user */
-                if (displayPicId) {
-                    if (existingUser.imageUrl) {
-                        if ((0, fs_1.existsSync)("./public/".concat(existingUser.imageUrl)))
-                            (0, fs_1.unlinkSync)("./public/".concat(existingUser.imageUrl));
-                    }
-                    existingUser.displayPicId = displayPicId;
-                    existingUser.imageUrl = "";
-                }
-                if (req.file) {
-                    if (existingUser.imageUrl) {
-                        if ((0, fs_1.existsSync)("./public/".concat(existingUser.imageUrl)))
-                            (0, fs_1.unlinkSync)("./public/".concat(existingUser.imageUrl));
-                    }
-                    existingUser.imageUrl = "image/".concat(req.file.filename);
-                    existingUser.displayPicId = 0;
-                }
-                return [4 /*yield*/, usersRepo.save(existingUser)];
-            case 3:
-                user = _a.sent();
-                token = existingUser.generateToken();
-                return [2 /*return*/, res
-                        .status(status_codes_1.STATUS_CODES.OK)
-                        .header(process.env.TOKEN_HEADER, token)
-                        .send({ data: user, token: token })];
-            case 4:
-                error_1 = _a.sent();
+                error_1 = _b.sent();
                 console.error(error_1);
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)
-                        .send("An error occured trying to update your DP.")];
-            case 5: return [2 /*return*/];
+                        .send("An error occurred trying to create your account.")];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
-exports.default = updateUserDp;
-//# sourceMappingURL=update-user-dp.js.map
+exports.default = createFeedback;
+//# sourceMappingURL=create-feedback.js.map

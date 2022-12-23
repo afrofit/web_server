@@ -5,6 +5,7 @@ import { STATUS_CODES } from "../types/status-codes";
 export interface UserPayload {
   id: string;
   email: string;
+  userId: string;
 }
 
 declare global {

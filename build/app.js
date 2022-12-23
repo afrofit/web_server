@@ -52,6 +52,7 @@ var user_1 = require("./routes/user");
 var performance_1 = require("./routes/performance");
 var marathon_1 = require("./routes/marathon");
 var payments_1 = require("./routes/payments");
+var feedback_1 = require("./routes/feedback");
 var stripe_1 = __importDefault(require("stripe"));
 /* App Setup */
 var app = (0, express_1.default)();
@@ -76,6 +77,7 @@ app.use("/api/users", user_1.userRoutes);
 app.use("/api/performance", performance_1.performanceRoutes);
 app.use("/api/marathon", marathon_1.marathonRoutes);
 app.use("/api/payments", payments_1.paymentRoutes);
+app.use("/api/feedbacks", feedback_1.feedbackRoutes);
 /* Catch-Alls */
 app.get("/api", function (req, res) {
     return res.send("Welcome to a Afrofit API.");

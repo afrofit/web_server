@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import _ from "lodash";
 import { ObjectID } from "mongodb";
-import { unlinkSync } from "fs";
+import { unlinkSync, existsSync } from "fs";
 
 import { AppDataSource } from "./../../data-source";
 
@@ -36,15 +36,19 @@ const updateUserDp = async (req: Request, res: Response) => {
 
     /** Now let's update a user */
     if (displayPicId) {
+      if (existingUser.imageUrl) {
+        if (existsSync(`./public/${existingUser.imageUrl}`))
+          unlinkSync(`./public/${existingUser.imageUrl}`);
+      }
       existingUser.displayPicId = displayPicId;
-      if (existingUser.imageUrl)
-        unlinkSync(`./public/${existingUser.imageUrl}`);
       existingUser.imageUrl = "";
     }
 
     if (req.file) {
-      if (existingUser.imageUrl)
-        unlinkSync(`./public/${existingUser.imageUrl}`);
+      if (existingUser.imageUrl) {
+        if (existsSync(`./public/${existingUser.imageUrl}`))
+          unlinkSync(`./public/${existingUser.imageUrl}`);
+      }
       existingUser.imageUrl = `image/${req.file.filename}`;
       existingUser.displayPicId = 0;
     }

@@ -10,6 +10,7 @@ import { userRoutes } from "./routes/user";
 import { performanceRoutes } from "./routes/performance";
 import { marathonRoutes } from "./routes/marathon";
 import { paymentRoutes } from "./routes/payments";
+import { feedbackRoutes } from "./routes/feedback";
 import Stripe from "stripe";
 
 /* App Setup */
@@ -41,6 +42,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/performance", performanceRoutes);
 app.use("/api/marathon", marathonRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/feedbacks", feedbackRoutes);
 
 /* Catch-Alls */
 
