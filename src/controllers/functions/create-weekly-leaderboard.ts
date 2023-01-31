@@ -1,6 +1,7 @@
 import { isAfter, isBefore } from "date-fns";
 import { AppDataSource } from "../../data-source";
 import { Leaderboard } from "../../entity/Leaderboard";
+import { logger } from "../../logger";
 
 const TODAY = new Date();
 
@@ -19,9 +20,9 @@ export const createWeeklyLeaderboard = async () => {
         isAfter(existingLeaderboard.endDate, TODAY) &&
         isBefore(existingLeaderboard.startDate, TODAY);
 
-      console.log("existingLeaderboard", existingLeaderboard);
+      logger(`existingLeaderboard: ${existingLeaderboard}`);
 
-      console.log("Leaderboard condition", condition);
+      logger(`Leaderboard condition: ${condition}`);
 
       if (condition) {
         return existingLeaderboard;

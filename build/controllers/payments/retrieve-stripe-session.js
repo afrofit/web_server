@@ -43,6 +43,7 @@ var mongodb_1 = require("mongodb");
 var app_1 = require("../../app");
 var data_source_1 = require("../../data-source");
 var User_1 = require("../../entity/User");
+var logger_1 = require("../../logger");
 var status_codes_1 = require("../../types/status-codes");
 var retrieve_stripe_session_1 = __importDefault(require("./validation/retrieve-stripe-session"));
 var retrieveStripeSession = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -72,7 +73,7 @@ var retrieveStripeSession = function (req, res) { return __awaiter(void 0, void 
                 return [4 /*yield*/, app_1.stripe.checkout.sessions.retrieve(sessionId)];
             case 3:
                 session = _a.sent();
-                console.log("session", session);
+                (0, logger_1.logger)("session: ".concat(session));
                 if (!(!existingUser.stripeCustomerId ||
                     !existingUser.lastActiveSubscriptionId)) return [3 /*break*/, 5];
                 existingUser.stripeCustomerId = session.customer;

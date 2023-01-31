@@ -1,15 +1,16 @@
 import { Request, Response } from "express";
+
 import { AppDataSource } from "../../data-source";
 import { User } from "../../entity/User";
 import { ObjectID } from "mongodb";
-import { nodeMailerTransporter } from "../../config";
 import { STATUS_CODES } from "../../types/status-codes";
 import validateSetNewPassword from "./validation/set-new-password";
+import { logger } from "../../logger";
 
 const setNewPassword = async (req: Request, res: Response) => {
   const { error } = validateSetNewPassword(req.body);
 
-  console.log("ReqBody", req.body);
+  logger(`setNewPassword ReqBody: ${req.body}`);
 
   if (error)
     return res.status(STATUS_CODES.BAD_REQUEST).send(error.details[0].message);
@@ -37,31 +38,10 @@ const setNewPassword = async (req: Request, res: Response) => {
 
     await usersRepo.save(resettableUser);
 
-    const mailOptions = {
-      from: `"Afrofit App" <${process.env.EMAIL_USER}>`, // sender address
-      to: resettableUser.email,
-      subject: "Welcome!",
-      template: "password_changed",
-      context: {
-        name: resettableUser.username,
-        adminEmail: process.env.AFROFIT_CONTACT_EMAIL,
-      },
-    };
-
-    // trigger the sending of the E-mail
-    nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        return console.log(error);
-      }
-      console.log("Message sent: " + info.response);
+    return res.status(STATUS_CODES.OK).send({
+      message: "Your password are changed",
+      result: { isUpdated: true },
     });
-
-    const token = resettableUser.generateToken();
-
-    return res
-      .status(STATUS_CODES.OK)
-      .header(process.env.TOKEN_HEADER, token)
-      .send({ token });
   } catch (error) {
     console.error(error);
     return res

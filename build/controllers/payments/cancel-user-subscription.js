@@ -40,6 +40,7 @@ var mongodb_1 = require("mongodb");
 var app_1 = require("../../app");
 var data_source_1 = require("../../data-source");
 var User_1 = require("../../entity/User");
+var logger_1 = require("../../logger");
 var status_codes_1 = require("../../types/status-codes");
 var cancelUserSubscription = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var userId, formattedUserId, usersRepo, existingUser, subscription, isActive, error_1;
@@ -76,7 +77,7 @@ var cancelUserSubscription = function (req, res) { return __awaiter(void 0, void
                 _a.sent();
                 _a.label = 5;
             case 5:
-                console.log("isActive", isActive);
+                (0, logger_1.logger)("isActive: ".concat(isActive));
                 return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.OK).send({ activeSubscription: isActive })];
             case 6:
                 error_1 = _a.sent();

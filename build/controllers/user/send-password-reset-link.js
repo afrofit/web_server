@@ -44,19 +44,21 @@ var data_source_1 = require("../../data-source");
 var User_1 = require("../../entity/User");
 var status_codes_1 = require("../../types/status-codes");
 var send_password_reset_link_1 = __importDefault(require("./validation/send-password-reset-link"));
-var config_1 = require("../../config");
+var mailer_1 = require("../../mailer");
+var logger_1 = require("../../logger");
 var sendPasswordResetLink = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var error, email, usersRepo, existingUser, hash, resetLink, mailOptions, error_1;
+    var error, email, usersRepo, existingUser, hash, resetLink, mailInfo, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
+                (0, logger_1.logger)("sendPasswordResetLink ReqBody: ".concat(req.body));
                 error = (0, send_password_reset_link_1.default)(req.body).error;
                 if (error)
                     return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.BAD_REQUEST).send(error.details[0].message)];
                 email = req.body.email;
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 4, , 5]);
+                _a.trys.push([1, 5, , 6]);
                 usersRepo = data_source_1.AppDataSource.getMongoRepository(User_1.User);
                 return [4 /*yield*/, usersRepo.findOneBy({ email: email })];
             case 2:
@@ -70,32 +72,25 @@ var sendPasswordResetLink = function (req, res) { return __awaiter(void 0, void 
                 _a.sent();
                 resetLink = "".concat(process.env.CLIENT_URL, "/set-new-password/").concat(existingUser.id, "/").concat(hash);
                 // Email this link
-                console.log("resetLink", resetLink);
-                mailOptions = {
-                    from: "\"Afrofit App\" <".concat(process.env.EMAIL_USER, ">"),
-                    to: email,
-                    subject: "Welcome!",
-                    template: "password_reset",
-                    context: {
-                        name: existingUser.username,
-                        resetLink: resetLink,
-                    },
+                (0, logger_1.logger)("resetLink: ".concat(resetLink));
+                mailInfo = {
+                    to: existingUser.email,
+                    subject: "Your password reset link",
+                    html: "<div><p>Hii ".concat(existingUser.username, "</p>\n      <p>We're sending you this email because you requested a password reset. Click on this link to set a new password</p>\n      <a href=").concat(resetLink, ">Set a new password</a>\n      </div>"),
                 };
-                // trigger the sending of the E-mail
-                config_1.nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
-                    if (error) {
-                        return console.log(error);
-                    }
-                    console.log("Message sent: " + info.response);
-                });
-                return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.OK).send({ result: true })];
+                return [4 /*yield*/, (0, mailer_1.mailer)(mailInfo)];
             case 4:
+                _a.sent();
+                return [2 /*return*/, res
+                        .status(status_codes_1.STATUS_CODES.OK)
+                        .send({ message: "Password reset mail sent", result: { isSend: true } })];
+            case 5:
                 error_1 = _a.sent();
                 console.error(error_1);
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)
                         .send("An error occured trying to create your account.")];
-            case 5: return [2 /*return*/];
+            case 6: return [2 /*return*/];
         }
     });
 }); };

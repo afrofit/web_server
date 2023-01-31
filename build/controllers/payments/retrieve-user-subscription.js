@@ -50,7 +50,7 @@ var retrieveUserSubscription = function (req, res) { return __awaiter(void 0, vo
                 formattedUserId = (0, mongodb_1.ObjectID)(userId);
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 4, , 5]);
+                _a.trys.push([1, 7, , 8]);
                 usersRepo = data_source_1.AppDataSource.getMongoRepository(User_1.User);
                 return [4 /*yield*/, usersRepo.findOneBy({
                         where: { _id: formattedUserId },
@@ -67,21 +67,28 @@ var retrieveUserSubscription = function (req, res) { return __awaiter(void 0, vo
             case 3:
                 subscription = _a.sent();
                 isActive = false;
-                if (subscription.status === "active" ||
-                    subscription.status === "trialing") {
-                    isActive = true;
-                }
+                if (!(subscription.status === "active" ||
+                    subscription.status === "trialing")) return [3 /*break*/, 4];
+                isActive = true;
+                return [3 /*break*/, 6];
+            case 4:
+                existingUser.lastActiveSubscriptionId = "";
+                return [4 /*yield*/, usersRepo.save(existingUser)];
+            case 5:
+                _a.sent();
+                _a.label = 6;
+            case 6:
                 endDate = new Date(subscription.current_period_end * 1000);
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.OK)
                         .send({ activesSubscription: isActive, endDate: endDate })];
-            case 4:
+            case 7:
                 error_1 = _a.sent();
                 console.error(error_1);
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)
                         .send("An error occured trying to retrieve a stripe session.")];
-            case 5: return [2 /*return*/];
+            case 8: return [2 /*return*/];
         }
     });
 }); };

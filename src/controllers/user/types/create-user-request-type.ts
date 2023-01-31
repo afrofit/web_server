@@ -6,4 +6,6 @@ export type CreateUserRequestType = {
   username: string;
   displayPicId: number;
   imageUrl: string;
+  role: string;
+  isBlock: string;
 };

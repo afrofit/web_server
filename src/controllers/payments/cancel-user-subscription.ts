@@ -4,6 +4,7 @@ import { ObjectID } from "mongodb";
 import { stripe } from "../../app";
 import { AppDataSource } from "../../data-source";
 import { User } from "../../entity/User";
+import { logger } from "../../logger";
 import { STATUS_CODES } from "../../types/status-codes";
 
 const cancelUserSubscription = async (req: Request, res: Response) => {
@@ -42,7 +43,7 @@ const cancelUserSubscription = async (req: Request, res: Response) => {
       await usersRepo.save(existingUser);
     }
 
-    console.log("isActive", isActive);
+    logger(`isActive: ${isActive}`);
 
     return res.status(STATUS_CODES.OK).send({ activeSubscription: isActive });
   } catch (error) {

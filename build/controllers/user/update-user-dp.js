@@ -41,12 +41,13 @@ var fs_1 = require("fs");
 var data_source_1 = require("./../../data-source");
 var status_codes_1 = require("../../types/status-codes");
 var User_1 = require("../../entity/User");
+var logger_1 = require("../../logger");
 var updateUserDp = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var userId, displayPicId, formattedUserId, usersRepo, existingUser, user, token, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                console.log("req.file: ".concat(req.file));
+                (0, logger_1.logger)("req.file: ".concat(req.file));
                 userId = req.params.userId;
                 displayPicId = req.body.displayPicId;
                 formattedUserId = (0, mongodb_1.ObjectID)(userId);
@@ -77,7 +78,7 @@ var updateUserDp = function (req, res) { return __awaiter(void 0, void 0, void 0
                         if ((0, fs_1.existsSync)("./public/".concat(existingUser.imageUrl)))
                             (0, fs_1.unlinkSync)("./public/".concat(existingUser.imageUrl));
                     }
-                    existingUser.imageUrl = "image/".concat(req.file.filename);
+                    existingUser.imageUrl = req.file.filename;
                     existingUser.displayPicId = 0;
                 }
                 return [4 /*yield*/, usersRepo.save(existingUser)];

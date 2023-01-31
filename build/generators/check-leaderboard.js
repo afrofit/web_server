@@ -40,6 +40,7 @@ exports.checkLeaderboard = void 0;
 var data_source_1 = require("./../data-source");
 var create_weekly_leaderboard_1 = require("../controllers/functions/create-weekly-leaderboard");
 var Leaderboard_1 = require("./../entity/Leaderboard");
+var logger_1 = require("../logger");
 var checkLeaderboard = function () { return __awaiter(void 0, void 0, void 0, function () {
     var leaderboardRepo, existingLeaderboards, leaderboard;
     return __generator(this, function (_a) {
@@ -53,7 +54,7 @@ var checkLeaderboard = function () { return __awaiter(void 0, void 0, void 0, fu
                 return [4 /*yield*/, (0, create_weekly_leaderboard_1.createWeeklyLeaderboard)()];
             case 2:
                 leaderboard = _a.sent();
-                console.log("leadboard", leaderboard);
+                (0, logger_1.logger)("leadboard: ".concat(leaderboard));
                 _a.label = 3;
             case 3: return [2 /*return*/];
         }
