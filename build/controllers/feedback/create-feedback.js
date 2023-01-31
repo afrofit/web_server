@@ -41,7 +41,7 @@ var status_codes_1 = require("../../types/status-codes");
 var Feedback_1 = require("../../entity/Feedback");
 var validate_create_feedback_1 = require("./validation/validate-create-feedback");
 var createFeedback = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var error, _a, description, title, name, imageUrl, feedbacksRepo, feedbackData, results, error_1;
+    var error, _a, description, title, name, feedbacksRepo, feedbackData, results, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -52,14 +52,15 @@ var createFeedback = function (req, res) { return __awaiter(void 0, void 0, void
             case 1:
                 _b.trys.push([1, 3, , 4]);
                 _a = req.body, description = _a.description, title = _a.title, name = _a.name;
-                imageUrl = req.file ? req.file.filename : "";
                 feedbacksRepo = data_source_1.AppDataSource.getMongoRepository(Feedback_1.Feedback);
                 feedbackData = new Feedback_1.Feedback();
-                feedbackData.imageUrl = imageUrl;
                 feedbackData.title = title;
                 feedbackData.name = name;
                 feedbackData.description = description;
                 feedbackData.isHide = false;
+                if (req.file) {
+                    feedbackData.imageUrl = req.file.filename;
+                }
                 return [4 /*yield*/, feedbacksRepo.save(feedbackData)];
             case 2:
                 results = _b.sent();
