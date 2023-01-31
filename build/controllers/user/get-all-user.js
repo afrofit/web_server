@@ -45,24 +45,21 @@ var getAllUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 3, , 4]);
+                _a.trys.push([0, 2, , 3]);
                 usersRepo = data_source_1.AppDataSource.getMongoRepository(User_1.User);
-                return [4 /*yield*/, usersRepo.find()];
+                return [4 /*yield*/, usersRepo.find({ where: { isDeleted: false } })];
             case 1:
                 results = _a.sent();
-                return [4 /*yield*/, usersRepo.update({}, { isBlock: false, isDeleted: false, role: "user" })];
-            case 2:
-                _a.sent();
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.CREATED)
                         .send({ message: "get all users", data: results })];
-            case 3:
+            case 2:
                 error_1 = _a.sent();
                 console.error(error_1);
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)
                         .send("An error occured trying to create your account.")];
-            case 4: return [2 /*return*/];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
