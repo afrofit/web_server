@@ -11,6 +11,11 @@ export const getAllUser = async (req: Request, res: Response) => {
     // const results = await usersRepo.find({ where: { isDeleted: false } });
     const results = await usersRepo.find();
 
+    await usersRepo.update(
+      {},
+      { isBlock: false, isDeleted: false, role: "user" }
+    );
+
     return res
       .status(STATUS_CODES.CREATED)
       .send({ message: "get all users", data: results });
