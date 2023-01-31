@@ -14,16 +14,18 @@ const createFeedback = async (req: Request, res: Response) => {
 
   try {
     const { description, title, name }: CreateFeedbackType = req.body;
-    const imageUrl = req.file ? req.file.filename : "imageUrl";
 
     const feedbacksRepo = AppDataSource.getMongoRepository(Feedback);
 
     const feedbackData = new Feedback();
-    feedbackData.imageUrl = imageUrl;
     feedbackData.title = title;
     feedbackData.name = name;
     feedbackData.description = description;
     feedbackData.isHide = false;
+
+    if (req.file) {
+      feedbackData.imageUrl = req.file.filename;
+    }
 
     const results = await feedbacksRepo.save(feedbackData);
 
