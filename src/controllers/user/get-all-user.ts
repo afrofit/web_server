@@ -8,13 +8,7 @@ export const getAllUser = async (req: Request, res: Response) => {
   //   const { role } = req.currentUser;
   try {
     const usersRepo = AppDataSource.getMongoRepository(User);
-    // const results = await usersRepo.find({ where: { isDeleted: false } });
-    const results = await usersRepo.find();
-
-    await usersRepo.update(
-      {},
-      { isBlock: false, isDeleted: false, role: "user" }
-    );
+    const results = await usersRepo.find({ where: { isDeleted: false } });
 
     return res
       .status(STATUS_CODES.CREATED)
