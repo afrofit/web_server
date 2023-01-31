@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var PlayedChapter_1 = require("./../../entity/PlayedChapter");
 var data_source_1 = require("../../data-source");
 var status_codes_1 = require("../../types/status-codes");
+var logger_1 = require("../../logger");
 var getUserChaptersActivity = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, userId, storyId, playedStoryId, playedChaptersRepo, playedChapters, mappedChapters_1, error_1;
     return __generator(this, function (_b) {
@@ -58,7 +59,7 @@ var getUserChaptersActivity = function (req, res) { return __awaiter(void 0, voi
                     return [2 /*return*/, {}];
                 }
                 mappedChapters_1 = {};
-                console.log("mappedChapters", mappedChapters_1);
+                (0, logger_1.logger)("mappedChapters: ".concat(mappedChapters_1));
                 playedChapters.map(function (chapter) {
                     return (mappedChapters_1[chapter.chapterId] = {
                         userSteps: chapter.userSteps,

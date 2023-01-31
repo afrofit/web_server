@@ -47,6 +47,7 @@ var status_codes_1 = require("../../types/status-codes");
 var PlayedChapter_1 = require("../../entity/PlayedChapter");
 var User_1 = require("../../entity/User");
 var get_active_leaderboard_1 = require("../functions/get-active-leaderboard");
+var logger_1 = require("../../logger");
 var CALORIE_MULTPLIER = 1.75;
 var saveUserDanceActivity = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, userId, chapterId, playedStoryId, _b, timeDancedMS, userSteps, clampedUserSteps, chapterCompleted, storyCompleted, formattedUserId, formattedPlayedStoryId, usersRepo, existingUser, playedStoryRepo, playedChapterRepo, performanceRepo, todaysActivityRepo, leaderboardScoreRepo, todaysActivities, todaysActivity, playedChapter, playedStory, performance, activeLeaderboard, userLeaderboardScore, token, error_1;
@@ -96,7 +97,7 @@ var saveUserDanceActivity = function (req, res) { return __awaiter(void 0, void 
                             .status(status_codes_1.STATUS_CODES.BAD_REQUEST)
                             .send("Oops! Your activity today doesn't exist.")];
                 }
-                console.log("todaysActivity", todaysActivity);
+                (0, logger_1.logger)("todaysActivity: ".concat(todaysActivity));
                 return [4 /*yield*/, playedChapterRepo.findOne({
                         where: { userId: userId, chapterId: chapterId },
                     })];
@@ -144,9 +145,7 @@ var saveUserDanceActivity = function (req, res) { return __awaiter(void 0, void 
                     })];
             case 8:
                 userLeaderboardScore = _c.sent();
-                console.log("Found a userLeaderboardScore", userLeaderboardScore, "!");
                 if (!!userLeaderboardScore) return [3 /*break*/, 10];
-                console.log("We can't find an existing leaderboard score");
                 userLeaderboardScore = new LeaderboardScore_1.LeaderboardScore();
                 userLeaderboardScore.email = existingUser.email;
                 userLeaderboardScore.userId = existingUser.id.toString();

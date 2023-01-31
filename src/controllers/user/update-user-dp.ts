@@ -8,9 +8,10 @@ import { AppDataSource } from "./../../data-source";
 import { STATUS_CODES } from "../../types/status-codes";
 import { User } from "../../entity/User";
 import validateUpdateUserDp from "./validation/update-user-dp";
+import { logger } from "../../logger";
 
 const updateUserDp = async (req: Request, res: Response) => {
-  console.log(`req.file: ${req.file}`);
+  logger(`req.file: ${req.file}`);
 
   // const { error } = validateUpdateUserDp(req.body);
 
@@ -49,7 +50,7 @@ const updateUserDp = async (req: Request, res: Response) => {
         if (existsSync(`./public/${existingUser.imageUrl}`))
           unlinkSync(`./public/${existingUser.imageUrl}`);
       }
-      existingUser.imageUrl = `image/${req.file.filename}`;
+      existingUser.imageUrl = req.file.filename;
       existingUser.displayPicId = 0;
     }
 

@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateLeaderboardScores = void 0;
 var data_source_1 = require("../data-source");
 var Leaderboard_1 = require("../entity/Leaderboard");
+var logger_1 = require("../logger");
 var LeaderboardScore_1 = require("./../entity/LeaderboardScore");
 var scores = Array.from(Array(200).keys());
 var names = [
@@ -123,7 +124,7 @@ var generateLeaderboardScores = function () { return __awaiter(void 0, void 0, v
                     }); }))];
             case 2:
                 _a.sent();
-                console.log("Done seeding leaderboard scores...");
+                (0, logger_1.logger)("Done seeding leaderboard scores...");
                 return [2 /*return*/];
         }
     });

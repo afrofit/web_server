@@ -40,6 +40,7 @@ exports.createWeeklyLeaderboard = void 0;
 var date_fns_1 = require("date-fns");
 var data_source_1 = require("../../data-source");
 var Leaderboard_1 = require("../../entity/Leaderboard");
+var logger_1 = require("../../logger");
 var TODAY = new Date();
 var createWeeklyLeaderboard = function () { return __awaiter(void 0, void 0, void 0, function () {
     var leaderboardRepo, existingLeaderboards, existingLeaderboard, condition, newLeaderboard_1, newLeaderboard, error_1;
@@ -59,8 +60,8 @@ var createWeeklyLeaderboard = function () { return __awaiter(void 0, void 0, voi
                 existingLeaderboard = existingLeaderboards[0];
                 condition = (0, date_fns_1.isAfter)(existingLeaderboard.endDate, TODAY) &&
                     (0, date_fns_1.isBefore)(existingLeaderboard.startDate, TODAY);
-                console.log("existingLeaderboard", existingLeaderboard);
-                console.log("Leaderboard condition", condition);
+                (0, logger_1.logger)("existingLeaderboard: ".concat(existingLeaderboard));
+                (0, logger_1.logger)("Leaderboard condition: ".concat(condition));
                 if (!condition) return [3 /*break*/, 3];
                 return [2 /*return*/, existingLeaderboard];
             case 3:

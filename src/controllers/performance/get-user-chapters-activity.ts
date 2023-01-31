@@ -4,6 +4,7 @@ import _ from "lodash";
 
 import { AppDataSource } from "../../data-source";
 import { STATUS_CODES } from "../../types/status-codes";
+import { logger } from "../../logger";
 
 const getUserChaptersActivity = async (req: Request, res: Response) => {
   const { userId, storyId, playedStoryId } = req.params;
@@ -25,7 +26,7 @@ const getUserChaptersActivity = async (req: Request, res: Response) => {
 
     const mappedChapters = {} as ChapterPlayedType;
 
-    console.log("mappedChapters", mappedChapters);
+    logger(`mappedChapters: ${mappedChapters}`);
 
     playedChapters.map(
       (chapter) =>

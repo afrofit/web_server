@@ -42,16 +42,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var data_source_1 = require("../../data-source");
 var User_1 = require("../../entity/User");
 var mongodb_1 = require("mongodb");
-var config_1 = require("../../config");
 var status_codes_1 = require("../../types/status-codes");
 var set_new_password_1 = __importDefault(require("./validation/set-new-password"));
+var logger_1 = require("../../logger");
 var setNewPassword = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var error, _a, password, hash, userId, formattedUserId, usersRepo, resettableUser, mailOptions, token, error_1;
+    var error, _a, password, hash, userId, formattedUserId, usersRepo, resettableUser, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 error = (0, set_new_password_1.default)(req.body).error;
-                console.log("ReqBody", req.body);
+                (0, logger_1.logger)("setNewPassword ReqBody: ".concat(req.body));
                 if (error)
                     return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.BAD_REQUEST).send(error.details[0].message)];
                 _a = req.body, password = _a.password, hash = _a.hash;
@@ -77,28 +77,10 @@ var setNewPassword = function (req, res) { return __awaiter(void 0, void 0, void
                 return [4 /*yield*/, usersRepo.save(resettableUser)];
             case 3:
                 _b.sent();
-                mailOptions = {
-                    from: "\"Afrofit App\" <".concat(process.env.EMAIL_USER, ">"),
-                    to: resettableUser.email,
-                    subject: "Welcome!",
-                    template: "password_changed",
-                    context: {
-                        name: resettableUser.username,
-                        adminEmail: process.env.AFROFIT_CONTACT_EMAIL,
-                    },
-                };
-                // trigger the sending of the E-mail
-                config_1.nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
-                    if (error) {
-                        return console.log(error);
-                    }
-                    console.log("Message sent: " + info.response);
-                });
-                token = resettableUser.generateToken();
-                return [2 /*return*/, res
-                        .status(status_codes_1.STATUS_CODES.OK)
-                        .header(process.env.TOKEN_HEADER, token)
-                        .send({ token: token })];
+                return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.OK).send({
+                        message: "Your password are changed",
+                        result: { isUpdated: true },
+                    })];
             case 4:
                 error_1 = _b.sent();
                 console.error(error_1);

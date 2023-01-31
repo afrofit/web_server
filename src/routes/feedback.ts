@@ -1,12 +1,28 @@
 import express from "express";
 
-import { createFeedback, getFeedback } from "../controllers/feedback";
-import { fileUpload } from "../middleware";
+import {
+  createFeedback,
+  deleteFeedback,
+  getAllClass,
+  getFeedbackById,
+  updateFeedback,
+} from "../controllers/feedback";
+import { fileUpload, isAdmin, isAuthenticated } from "../middleware";
 
 const router = express.Router();
 
-router.get("/", getFeedback);
+/**
+ * Testimonials  APIs
+ * */
 
-router.post("/create", fileUpload.single("image"), createFeedback);
+router.get("/", getAllClass);
+
+router.get("/:feedbackId", isAuthenticated, getFeedbackById);
+
+router.post("/create", isAdmin, fileUpload.single("image"), createFeedback);
+
+router.put("/:feedbackId", isAdmin, fileUpload.single("image"), updateFeedback);
+
+router.delete("/:feedbackId", isAdmin, deleteFeedback);
 
 export { router as feedbackRoutes };

@@ -45,19 +45,19 @@ var data_source_1 = require("./../../data-source");
 var status_codes_1 = require("../../types/status-codes");
 var create_user_1 = __importDefault(require("./validation/create-user"));
 var User_1 = require("../../entity/User");
-// import { nodeMailerTransporter } from "../../config";
+var mailer_1 = require("../../mailer");
 var createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var error, _a, lastName, firstName, username, email, displayPicId, password, usersRepo, existingUsername, existingUserEmail, user, todaysActivityRepo, performanceRepo, todaysActivity, performanceData, token, error_1;
+    var error, _a, lastName, firstName, username, email, displayPicId, password, role, usersRepo, existingUsername, existingUserEmail, user, todaysActivityRepo, performanceRepo, todaysActivity, performanceData, token, mailInfo, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 error = (0, create_user_1.default)(req.body).error;
                 if (error)
                     return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.BAD_REQUEST).send(error.details[0].message)];
-                _a = req.body, lastName = _a.lastName, firstName = _a.firstName, username = _a.username, email = _a.email, displayPicId = _a.displayPicId, password = _a.password;
+                _a = req.body, lastName = _a.lastName, firstName = _a.firstName, username = _a.username, email = _a.email, displayPicId = _a.displayPicId, password = _a.password, role = _a.role;
                 _b.label = 1;
             case 1:
-                _b.trys.push([1, 7, , 8]);
+                _b.trys.push([1, 8, , 9]);
                 usersRepo = data_source_1.AppDataSource.getMongoRepository(User_1.User);
                 return [4 /*yield*/, usersRepo.findOneBy({ username: username })];
             case 2:
@@ -80,8 +80,14 @@ var createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                 user.lastName = lastName;
                 user.firstName = firstName;
                 user.displayPicId = displayPicId;
+                user.role = role;
+                user.stripeCustomerId = "";
+                user.lastActiveSubscriptionId = "";
+                user.notificationCount = 0;
+                user.isBlock = false;
+                user.isDeleted = false;
                 if (req.file)
-                    user.imageUrl = "image/".concat(req.file.filename);
+                    user.imageUrl = req.file.filename;
                 return [4 /*yield*/, usersRepo.save(user)];
             case 4:
                 _b.sent();
@@ -104,35 +110,25 @@ var createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
             case 6:
                 _b.sent();
                 token = user.generateToken();
-                //Send email
-                // const mailOptions = {
-                //   from: `"Afrofit Member Services" <${process.env.EMAIL_USER}>`, // sender address
-                //   to: user.email,
-                //   subject: "Welcome!",
-                //   template: "new_user",
-                //   context: {
-                //     name: user.username,
-                //     adminEmail: "afrofitapp@gmail.com",
-                //   },
-                // };
-                /** Let's really send the email now! */
-                // nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
-                //   if (error) {
-                //     return console.log(error);
-                //   }
-                //   console.log("Message sent: " + info.response);
-                // });
+                mailInfo = {
+                    to: user.email,
+                    subject: "Welcome to Afrofitapp!",
+                    html: "<div><p>Hii ".concat(user.username, "</p>\n        <p>Thanks for signing up for Afrofit App!</p>\n      </div>"),
+                };
+                return [4 /*yield*/, (0, mailer_1.mailer)(mailInfo)];
+            case 7:
+                _b.sent();
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.CREATED)
                         .header(process.env.TOKEN_HEADER, token)
                         .send({ token: token, id: user.id, email: user.email })];
-            case 7:
+            case 8:
                 error_1 = _b.sent();
                 console.error(error_1);
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)
                         .send("An error occured trying to create your account.")];
-            case 8: return [2 /*return*/];
+            case 9: return [2 /*return*/];
         }
     });
 }); };

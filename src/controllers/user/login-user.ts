@@ -2,6 +2,7 @@ import argon2 from "argon2";
 import { Request, Response } from "express";
 import { AppDataSource } from "../../data-source";
 import { User } from "../../entity/User";
+import { logger } from "../../logger";
 import { STATUS_CODES } from "../../types/status-codes";
 import validateLoginUser from "./validation/login-user";
 
@@ -11,9 +12,9 @@ const loginUser = async (req: Request, res: Response) => {
   if (error)
     return res.status(STATUS_CODES.BAD_REQUEST).send(error.details[0].message);
 
-  const { email, password } = req.body;
+  const { email, password, pushSubscription } = req.body;
 
-  console.log("REQBODY", req.body);
+  logger(`REQBODY: ${req.body}`);
 
   try {
     const usersRepo = AppDataSource.getMongoRepository(User);
@@ -26,6 +27,14 @@ const loginUser = async (req: Request, res: Response) => {
 
     if (!validPassword)
       return res.status(STATUS_CODES.BAD_REQUEST).send("Wrong Email/Password");
+
+    if (user.isBlock)
+      return res.status(STATUS_CODES.BAD_REQUEST).send("User is block");
+
+    if (pushSubscription) {
+      user.pushSubscription = pushSubscription;
+      await usersRepo.save(user);
+    }
 
     /** Let's log user in now */
     const token = user.generateToken();

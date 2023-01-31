@@ -8,6 +8,7 @@ var validateLoginUser = function (userData) {
     var schema = joi_1.default.object({
         email: joi_1.default.string().required().email(),
         password: joi_1.default.string().required().min(6).max(255),
+        pushSubscription: joi_1.default.object().optional(),
     });
     return schema.validate(userData);
 };

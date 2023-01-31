@@ -40,6 +40,7 @@ exports.getActiveLeaderboard = void 0;
 var date_fns_1 = require("date-fns");
 var data_source_1 = require("../../data-source");
 var Leaderboard_1 = require("../../entity/Leaderboard");
+var logger_1 = require("../../logger");
 var TODAY = new Date();
 var getActiveLeaderboard = function () { return __awaiter(void 0, void 0, void 0, function () {
     var leaderboardRepo, existingLeaderboards, weeklyLeaderboard, newLeaderboard, error_1;
@@ -57,7 +58,7 @@ var getActiveLeaderboard = function () { return __awaiter(void 0, void 0, void 0
                 existingLeaderboards = _a.sent();
                 if (!(existingLeaderboards.length > 0)) return [3 /*break*/, 5];
                 weeklyLeaderboard = existingLeaderboards[0];
-                console.log(typeof weeklyLeaderboard.createdAt, "weeklyLeaderboard.createdAt", weeklyLeaderboard.createdAt);
+                (0, logger_1.logger)("".concat(typeof weeklyLeaderboard.createdAt, "\n        weeklyLeaderboard.createdAt\n        ").concat(weeklyLeaderboard.createdAt));
                 if (!((0, date_fns_1.isAfter)(weeklyLeaderboard.endDate, TODAY) &&
                     (0, date_fns_1.isBefore)(weeklyLeaderboard.startDate, TODAY))) return [3 /*break*/, 3];
                 return [2 /*return*/, weeklyLeaderboard];
