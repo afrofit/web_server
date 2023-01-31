@@ -42,6 +42,7 @@ var data_source_1 = require("../../data-source");
 var status_codes_1 = require("../../types/status-codes");
 var create_weekly_leaderboard_1 = require("../functions/create-weekly-leaderboard");
 var User_1 = require("../../entity/User");
+var logger_1 = require("../../logger");
 var getMarathonData = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var userId, LOWER_LIMIT, formattedUserId, usersRepo, existingUser, leaderboardScoresRepo, activeLeaderboard, leaderboardScores, userLeaderboardScore, transformedScores, transformedUserScore, userScoreIndex, error_1;
     return __generator(this, function (_a) {
@@ -79,7 +80,7 @@ var getMarathonData = function (req, res) { return __awaiter(void 0, void 0, voi
                     })];
             case 4:
                 leaderboardScores = _a.sent();
-                console.log("leaderboardScores", leaderboardScores);
+                (0, logger_1.logger)("leaderboardScores: ".concat(leaderboardScores));
                 return [4 /*yield*/, leaderboardScoresRepo.findOne({
                         where: {
                             userId: userId,
@@ -100,7 +101,7 @@ var getMarathonData = function (req, res) { return __awaiter(void 0, void 0, voi
                 _a.sent();
                 _a.label = 7;
             case 7:
-                console.log("userLeaderboardScore", userLeaderboardScore);
+                (0, logger_1.logger)("userLeaderboardScore: ".concat(userLeaderboardScore));
                 transformedScores = leaderboardScores.map(function (score) {
                     return {
                         name: score.username,
@@ -108,13 +109,13 @@ var getMarathonData = function (req, res) { return __awaiter(void 0, void 0, voi
                         score: score.bodyMovements,
                     };
                 });
-                console.log("transformedScores", transformedScores);
+                (0, logger_1.logger)("transformedScores: ".concat(transformedScores));
                 transformedUserScore = {
                     name: userLeaderboardScore.username,
                     userId: userLeaderboardScore.userId,
                     score: userLeaderboardScore.bodyMovements,
                 };
-                console.log("transformedUserScore", transformedUserScore);
+                (0, logger_1.logger)("transformedUserScore ".concat(transformedUserScore));
                 userScoreIndex = transformedScores
                     .map(function (score) { return score.name; })
                     .indexOf(transformedUserScore.name);

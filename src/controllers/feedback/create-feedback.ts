@@ -1,27 +1,37 @@
 import { Request, Response } from "express";
-import { ObjectID } from "mongodb";
 
 import { AppDataSource } from "./../../data-source";
 import { STATUS_CODES } from "../../types/status-codes";
 import { Feedback } from "../../entity/Feedback";
+import { validateCreateFeedback } from "./validation/validate-create-feedback";
+import { CreateFeedbackType } from "./types/create-feedback";
 
 const createFeedback = async (req: Request, res: Response) => {
+  const { error } = validateCreateFeedback(req.body);
+
+  if (error)
+    return res.status(STATUS_CODES.BAD_REQUEST).send(error.details[0].message);
+
   try {
-    const { description, title, name } = req.body;
-    const imageUrl = req.file ? `image/${req.file.filename}` : "";
+    const { description, title, name }: CreateFeedbackType = req.body;
 
     const feedbacksRepo = AppDataSource.getMongoRepository(Feedback);
 
     const feedbackData = new Feedback();
-    feedbackData.imageUrl = imageUrl;
     feedbackData.title = title;
     feedbackData.name = name;
     feedbackData.description = description;
     feedbackData.isHide = false;
 
+    if (req.file) {
+      feedbackData.imageUrl = req.file.filename;
+    }
+
     const results = await feedbacksRepo.save(feedbackData);
 
-    return res.status(STATUS_CODES.CREATED).send(results);
+    return res
+      .status(STATUS_CODES.CREATED)
+      .send({ message: "Feedback data inserted", data: results });
   } catch (error) {
     console.error(error);
     return res

@@ -2,6 +2,7 @@ import { isAfter, isBefore } from "date-fns";
 
 import { AppDataSource } from "../../data-source";
 import { Leaderboard } from "../../entity/Leaderboard";
+import { logger } from "../../logger";
 
 const TODAY = new Date();
 
@@ -15,10 +16,10 @@ export const getActiveLeaderboard = async (): Promise<Leaderboard | null> => {
 
     if (existingLeaderboards.length > 0) {
       const weeklyLeaderboard = existingLeaderboards[0];
-      console.log(
-        typeof weeklyLeaderboard.createdAt,
-        "weeklyLeaderboard.createdAt",
+      logger(
+        `${typeof weeklyLeaderboard.createdAt}
         weeklyLeaderboard.createdAt
+        ${weeklyLeaderboard.createdAt}`
       );
 
       if (

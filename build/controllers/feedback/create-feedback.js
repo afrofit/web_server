@@ -39,14 +39,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var data_source_1 = require("./../../data-source");
 var status_codes_1 = require("../../types/status-codes");
 var Feedback_1 = require("../../entity/Feedback");
+var validate_create_feedback_1 = require("./validation/validate-create-feedback");
 var createFeedback = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, description, title, name, imageUrl, feedbacksRepo, feedbackData, results, error_1;
+    var error, _a, description, title, name, imageUrl, feedbacksRepo, feedbackData, results, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
+                error = (0, validate_create_feedback_1.validateCreateFeedback)(req.body).error;
+                if (error)
+                    return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.BAD_REQUEST).send(error.details[0].message)];
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
                 _a = req.body, description = _a.description, title = _a.title, name = _a.name;
-                imageUrl = req.file ? "image/".concat(req.file.filename) : "";
+                imageUrl = req.file ? req.file.filename : "";
                 feedbacksRepo = data_source_1.AppDataSource.getMongoRepository(Feedback_1.Feedback);
                 feedbackData = new Feedback_1.Feedback();
                 feedbackData.imageUrl = imageUrl;
@@ -55,16 +61,18 @@ var createFeedback = function (req, res) { return __awaiter(void 0, void 0, void
                 feedbackData.description = description;
                 feedbackData.isHide = false;
                 return [4 /*yield*/, feedbacksRepo.save(feedbackData)];
-            case 1:
-                results = _b.sent();
-                return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.CREATED).send(results)];
             case 2:
+                results = _b.sent();
+                return [2 /*return*/, res
+                        .status(status_codes_1.STATUS_CODES.CREATED)
+                        .send({ message: "Feedback data inserted", data: results })];
+            case 3:
                 error_1 = _b.sent();
                 console.error(error_1);
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)
                         .send("An error occurred trying to create your account.")];
-            case 3: return [2 /*return*/];
+            case 4: return [2 /*return*/];
         }
     });
 }); };

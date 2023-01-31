@@ -1,5 +1,6 @@
 import { AppDataSource } from "../data-source";
 import { Leaderboard } from "../entity/Leaderboard";
+import { logger } from "../logger";
 import { LeaderboardScore } from "./../entity/LeaderboardScore";
 
 const scores = Array.from(Array(200).keys());
@@ -79,5 +80,5 @@ export const generateLeaderboardScores = async () => {
       await existingLeaderboardScoresRepo.save(newScore);
     })
   );
-  console.log("Done seeding leaderboard scores...");
+  logger(`Done seeding leaderboard scores...`);
 };

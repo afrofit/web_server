@@ -1,22 +1,29 @@
 import { Request, Response } from "express";
+import { ObjectID } from "mongodb";
 
-import { AppDataSource } from "./../../data-source";
-import { STATUS_CODES } from "../../types/status-codes";
+import { AppDataSource } from "../../data-source";
 import { Feedback } from "../../entity/Feedback";
+import { logger } from "../../logger";
+import { STATUS_CODES } from "../../types/status-codes";
 
-const getFeedback = async (req: Request, res: Response) => {
+export const getFeedbackById = async (req: Request, res: Response) => {
+  logger(`getFeedbackById: ${JSON.stringify(req.params)}`);
+  const feedbackId = ObjectID(req.params.feedbackId);
+
   try {
-    const feedbacksRepo = AppDataSource.getMongoRepository(Feedback);
+    const feedbackRepo = AppDataSource.getMongoRepository(Feedback);
+    const results = await feedbackRepo.findOneBy({
+      where: { _id: feedbackId },
+    });
 
-    const results = await feedbacksRepo.find({ where: { isHide: false } });
-
-    return res.status(STATUS_CODES.CREATED).send(results);
+    return res
+      .status(STATUS_CODES.CREATED)
+      .send({ message: "get feedback", data: results });
   } catch (error) {
     console.error(error);
-    return res
-      .status(STATUS_CODES.INTERNAL_ERROR)
-      .send("An error occurred trying to create your account.");
+    return res.status(STATUS_CODES.INTERNAL_ERROR).send({
+      message: "An error occurred trying to get your feedback.",
+      data: {},
+    });
   }
 };
-
-export default getFeedback;

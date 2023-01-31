@@ -19,25 +19,33 @@ var Feedback = /** @class */ (function () {
         __metadata("design:type", typeorm_1.ObjectID)
     ], Feedback.prototype, "id", void 0);
     __decorate([
-        (0, typeorm_1.Column)({ default: "" }),
+        (0, typeorm_1.Column)({ default: true }),
         __metadata("design:type", String)
     ], Feedback.prototype, "name", void 0);
     __decorate([
-        (0, typeorm_1.Column)({ default: "" }),
+        (0, typeorm_1.Column)({ default: true }),
         __metadata("design:type", String)
     ], Feedback.prototype, "title", void 0);
     __decorate([
-        (0, typeorm_1.Column)({ default: "" }),
+        (0, typeorm_1.Column)({ default: true }),
         __metadata("design:type", String)
     ], Feedback.prototype, "imageUrl", void 0);
     __decorate([
-        (0, typeorm_1.Column)({ default: "" }),
+        (0, typeorm_1.Column)({ default: true }),
         __metadata("design:type", String)
     ], Feedback.prototype, "description", void 0);
     __decorate([
-        (0, typeorm_1.Column)({ default: false }),
+        (0, typeorm_1.Column)({ default: true }),
         __metadata("design:type", Boolean)
     ], Feedback.prototype, "isHide", void 0);
+    __decorate([
+        (0, typeorm_1.CreateDateColumn)(),
+        __metadata("design:type", String)
+    ], Feedback.prototype, "createdAt", void 0);
+    __decorate([
+        (0, typeorm_1.UpdateDateColumn)(),
+        __metadata("design:type", String)
+    ], Feedback.prototype, "updatedAt", void 0);
     Feedback = __decorate([
         (0, typeorm_1.Entity)("feedback")
     ], Feedback);

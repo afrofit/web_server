@@ -37,6 +37,9 @@ const retrieveUserSubscription = async (req: Request, res: Response) => {
       subscription.status === "trialing"
     ) {
       isActive = true;
+    } else {
+      existingUser.lastActiveSubscriptionId = "";
+      await usersRepo.save(existingUser);
     }
 
     const endDate = new Date(subscription.current_period_end * 1000);

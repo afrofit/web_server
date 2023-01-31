@@ -12,6 +12,7 @@ import { STATUS_CODES } from "../../types/status-codes";
 import { PlayedChapter } from "../../entity/PlayedChapter";
 import { User } from "../../entity/User";
 import { getActiveLeaderboard } from "../functions/get-active-leaderboard";
+import { logger } from "../../logger";
 
 const CALORIE_MULTPLIER = 1.75;
 
@@ -70,7 +71,7 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
         .send("Oops! Your activity today doesn't exist.");
     }
 
-    console.log("todaysActivity", todaysActivity);
+    logger(`todaysActivity: ${todaysActivity}`);
 
     const playedChapter = await playedChapterRepo.findOne({
       where: { userId, chapterId },
@@ -119,10 +120,7 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
       },
     });
 
-    console.log("Found a userLeaderboardScore", userLeaderboardScore, "!");
-
     if (!userLeaderboardScore) {
-      console.log("We can't find an existing leaderboard score");
       userLeaderboardScore = new LeaderboardScore();
       userLeaderboardScore.email = existingUser.email;
       userLeaderboardScore.userId = existingUser.id.toString();

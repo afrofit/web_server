@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import _ from "lodash";
+
 import { Performance } from "./../../entity/Performance";
 import { TodaysActivity } from "./../../entity/TodaysActivity";
 import { AppDataSource } from "./../../data-source";
-
 import { STATUS_CODES } from "../../types/status-codes";
 import validateCreateUser from "./validation/create-user";
 import { User } from "../../entity/User";
 import { CreateUserRequestType } from "./types/create-user-request-type";
-// import { nodeMailerTransporter } from "../../config";
+import { mailer } from "../../mailer";
 
 const createUser = async (req: Request, res: Response) => {
   const { error } = validateCreateUser(req.body);
@@ -23,6 +23,7 @@ const createUser = async (req: Request, res: Response) => {
     email,
     displayPicId,
     password,
+    role,
   }: CreateUserRequestType = req.body;
 
   try {
@@ -49,7 +50,14 @@ const createUser = async (req: Request, res: Response) => {
     user.lastName = lastName;
     user.firstName = firstName;
     user.displayPicId = displayPicId;
-    if (req.file) user.imageUrl = `image/${req.file.filename}`;
+    user.role = role;
+    user.stripeCustomerId = "";
+    user.lastActiveSubscriptionId = "";
+    user.notificationCount = 0;
+    user.isBlock = false;
+    user.isDeleted = false;
+
+    if (req.file) user.imageUrl = req.file.filename;
 
     await usersRepo.save(user);
 
@@ -75,25 +83,15 @@ const createUser = async (req: Request, res: Response) => {
 
     const token = user.generateToken();
 
-    //Send email
-    // const mailOptions = {
-    //   from: `"Afrofit Member Services" <${process.env.EMAIL_USER}>`, // sender address
-    //   to: user.email,
-    //   subject: "Welcome!",
-    //   template: "new_user",
-    //   context: {
-    //     name: user.username,
-    //     adminEmail: "afrofitapp@gmail.com",
-    //   },
-    // };
-
-    /** Let's really send the email now! */
-    // nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
-    //   if (error) {
-    //     return console.log(error);
-    //   }
-    //   console.log("Message sent: " + info.response);
-    // });
+    // send mail
+    const mailInfo = {
+      to: user.email,
+      subject: `Welcome to Afrofitapp!`,
+      html: `<div><p>Hii ${user.username}</p>
+        <p>Thanks for signing up for Afrofit App!</p>
+      </div>`,
+    };
+    await mailer(mailInfo);
 
     return res
       .status(STATUS_CODES.CREATED)
