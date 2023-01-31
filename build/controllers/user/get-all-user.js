@@ -47,7 +47,7 @@ var getAllUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 usersRepo = data_source_1.AppDataSource.getMongoRepository(User_1.User);
-                return [4 /*yield*/, usersRepo.find({ where: { isDeleted: false } })];
+                return [4 /*yield*/, usersRepo.find()];
             case 1:
                 results = _a.sent();
                 return [2 /*return*/, res
