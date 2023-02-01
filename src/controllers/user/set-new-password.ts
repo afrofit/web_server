@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import argon2 from "argon2";
+
 import { AppDataSource } from "../../data-source";
 import { User } from "../../entity/User";
 import { ObjectID } from "mongodb";
@@ -9,7 +11,7 @@ import validateSetNewPassword from "./validation/set-new-password";
 const setNewPassword = async (req: Request, res: Response) => {
   const { error } = validateSetNewPassword(req.body);
 
-  console.log("ReqBody", req.body);
+  logger(`setNewPassword ReqBody: ${JSON.stringify(req.body)}`);
 
   if (error)
     return res.status(STATUS_CODES.BAD_REQUEST).send(error.details[0].message);
@@ -32,7 +34,8 @@ const setNewPassword = async (req: Request, res: Response) => {
         .status(STATUS_CODES.BAD_REQUEST)
         .send("There was a problem setting a new password.");
     }
-    resettableUser.password = password;
+
+    resettableUser.password = await argon2.hash(password);
     resettableUser.password_reset_token = null;
 
     await usersRepo.save(resettableUser);
