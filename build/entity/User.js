@@ -80,6 +80,21 @@ var User = /** @class */ (function () {
         });
         return token;
     };
+    User.prototype.generateDeviceToken = function () {
+        var token = jsonwebtoken_1.default.sign({
+            userId: this.id,
+            username: this.username,
+            email: this.email,
+            firstName: this.firstName,
+            lastName: this.lastName,
+            displayPicId: this.displayPicId,
+            joinDate: this.createdAt,
+            lastStoryCompleted: this.lastStoryCompleted,
+            imageUrl: this.imageUrl,
+            role: this.role,
+        }, process.env.TOKEN_SECRET);
+        return token;
+    };
     User.prototype.savePassword = function () {
         return __awaiter(this, void 0, void 0, function () {
             var hashedPassword;
@@ -107,6 +122,7 @@ var User = /** @class */ (function () {
                 this.lastStoryCompleted = 0;
                 this.isBlock = false;
                 this.isDeleted = false;
+                this.FCMToken = [];
                 return [2 /*return*/];
             });
         });
@@ -147,6 +163,10 @@ var User = /** @class */ (function () {
         (0, typeorm_1.Column)({ default: true }),
         __metadata("design:type", Object)
     ], User.prototype, "pushSubscription", void 0);
+    __decorate([
+        (0, typeorm_1.Column)({ default: true }),
+        __metadata("design:type", Array)
+    ], User.prototype, "FCMToken", void 0);
     __decorate([
         (0, typeorm_1.Column)({ default: true }),
         __metadata("design:type", Boolean)

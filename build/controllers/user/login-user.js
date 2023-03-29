@@ -46,18 +46,18 @@ var logger_1 = require("../../logger");
 var status_codes_1 = require("../../types/status-codes");
 var login_user_1 = __importDefault(require("./validation/login-user"));
 var loginUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var error, _a, email, password, pushSubscription, usersRepo, user, validPassword, token, error_1;
+    var error, _a, email, password, pushSubscription, FCMToken, isDevice, usersRepo, user, validPassword, found, token, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 error = (0, login_user_1.default)(req.body).error;
+                (0, logger_1.logger)("login", req.body);
                 if (error)
                     return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.BAD_REQUEST).send(error.details[0].message)];
-                _a = req.body, email = _a.email, password = _a.password, pushSubscription = _a.pushSubscription;
-                (0, logger_1.logger)("REQBODY: ".concat(req.body));
+                _a = req.body, email = _a.email, password = _a.password, pushSubscription = _a.pushSubscription, FCMToken = _a.FCMToken, isDevice = _a.isDevice;
                 _b.label = 1;
             case 1:
-                _b.trys.push([1, 6, , 7]);
+                _b.trys.push([1, 5, , 6]);
                 usersRepo = data_source_1.AppDataSource.getMongoRepository(User_1.User);
                 return [4 /*yield*/, usersRepo.findOneBy({ email: email })];
             case 2:
@@ -69,27 +69,38 @@ var loginUser = function (req, res) { return __awaiter(void 0, void 0, void 0, f
                 validPassword = _b.sent();
                 if (!validPassword)
                     return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.BAD_REQUEST).send("Wrong Email/Password")];
-                if (user.isBlock)
-                    return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.BAD_REQUEST).send("User is block")];
-                if (!pushSubscription) return [3 /*break*/, 5];
-                user.pushSubscription = pushSubscription;
+                if (user.isBlock || user.isDeleted)
+                    return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.BAD_REQUEST).send("User is blocked")];
+                if (pushSubscription) {
+                    user.pushSubscription = pushSubscription;
+                }
+                if (isDevice && FCMToken) {
+                    found = user.FCMToken.find(function (element) { return element === FCMToken; });
+                    if (!found)
+                        user.FCMToken.push(FCMToken);
+                }
                 return [4 /*yield*/, usersRepo.save(user)];
             case 4:
                 _b.sent();
-                _b.label = 5;
-            case 5:
-                token = user.generateToken();
+                token = void 0;
+                /** Let's log user in now */
+                if (isDevice) {
+                    token = user.generateDeviceToken();
+                }
+                else {
+                    token = user.generateToken();
+                }
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.OK)
                         .header(process.env.TOKEN_HEADER, token)
                         .send({ token: token, data: user })];
-            case 6:
+            case 5:
                 error_1 = _b.sent();
                 console.error(error_1);
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)
                         .send("An error occured trying to log you into your account.")];
-            case 7: return [2 /*return*/];
+            case 6: return [2 /*return*/];
         }
     });
 }); };

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateUser = exports.inviteUsers = exports.sendPasswordResetLink = exports.setNewPassword = exports.getUserSubscription = exports.updateUserDp = exports.loginUser = exports.createUser = exports.getUser = exports.getAllUser = void 0;
+exports.signOut = exports.deleteUser = exports.dynamicUpdate = exports.updateUser = exports.inviteUsers = exports.sendPasswordResetLink = exports.setNewPassword = exports.getUserSubscription = exports.updateUserDp = exports.loginUser = exports.createUser = exports.getUser = exports.getAllUser = void 0;
 var get_all_user_1 = require("./get-all-user");
 Object.defineProperty(exports, "getAllUser", { enumerable: true, get: function () { return get_all_user_1.getAllUser; } });
 var get_user_1 = require("./get-user");
@@ -24,6 +24,10 @@ var invite_users_1 = require("./invite-users");
 Object.defineProperty(exports, "inviteUsers", { enumerable: true, get: function () { return invite_users_1.inviteUsers; } });
 var update_user_1 = require("./update-user");
 Object.defineProperty(exports, "updateUser", { enumerable: true, get: function () { return update_user_1.updateUser; } });
+var dynamic_update_1 = require("./dynamic-update");
+Object.defineProperty(exports, "dynamicUpdate", { enumerable: true, get: function () { return dynamic_update_1.dynamicUpdate; } });
 var delete_user_1 = require("./delete-user");
 Object.defineProperty(exports, "deleteUser", { enumerable: true, get: function () { return delete_user_1.deleteUser; } });
+var signOut_1 = require("./signOut");
+Object.defineProperty(exports, "signOut", { enumerable: true, get: function () { return signOut_1.signOut; } });
 //# sourceMappingURL=index.js.map

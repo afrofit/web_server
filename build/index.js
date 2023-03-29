@@ -72,9 +72,6 @@ var start = function () { return __awaiter(void 0, void 0, void 0, function () {
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 6, , 7]);
-                console.log("process.env.MONGO_URL: ".concat(process.env.MONGO_URL));
-                console.log("process.env.TOKEN_HEADER: ".concat(process.env.TOKEN_HEADER));
-                console.log("process.env.TOKEN_SECRET: ".concat(process.env.TOKEN_SECRET));
                 return [4 /*yield*/, data_source_1.AppDataSource.initialize()];
             case 2:
                 dataConnection = _a.sent();

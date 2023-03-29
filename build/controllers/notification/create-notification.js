@@ -41,56 +41,103 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createNotification = void 0;
 var web_push_1 = __importDefault(require("web-push"));
+var expo_server_sdk_1 = require("expo-server-sdk");
 var logger_1 = require("../../logger");
 var User_1 = require("../../entity/User");
 var status_codes_1 = require("../../types/status-codes");
 var data_source_1 = require("../../data-source");
+var expo = new expo_server_sdk_1.Expo();
 web_push_1.default.setVapidDetails(process.env.WEB_PUSH_CONTACT, process.env.PUBLIC_VAPID_KEY, process.env.PRIVATE_VAPID_KEY);
 var createNotification = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, emails, text, usersRepo, payload, _i, emails_1, email, pushSubscription, error_1;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var _a, emails, text, pushTokens, messages, usersRepo, payload, _i, emails_1, email, _b, pushSubscription, FCMToken, _c, pushTokens_1, pushToken, chunks, _d, chunks_1, chunk, ticketChunk, error_1, error_2;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
             case 0:
                 (0, logger_1.logger)("createNotification: ".concat(JSON.stringify(req.body)));
                 _a = req.body, emails = _a.email, text = _a.text;
-                _b.label = 1;
+                pushTokens = [];
+                messages = [];
+                _e.label = 1;
             case 1:
-                _b.trys.push([1, 7, , 8]);
+                _e.trys.push([1, 14, , 15]);
                 usersRepo = data_source_1.AppDataSource.getRepository(User_1.User);
                 payload = JSON.stringify({
                     title: "Afrofit App",
                     body: text,
                 });
                 _i = 0, emails_1 = emails;
-                _b.label = 2;
+                _e.label = 2;
             case 2:
-                if (!(_i < emails_1.length)) return [3 /*break*/, 6];
+                if (!(_i < emails_1.length)) return [3 /*break*/, 7];
                 email = emails_1[_i];
                 return [4 /*yield*/, usersRepo.findOne({
                         where: { email: email },
                     })];
             case 3:
-                pushSubscription = (_b.sent()).pushSubscription;
+                _b = _e.sent(), pushSubscription = _b.pushSubscription, FCMToken = _b.FCMToken;
                 if (!(Object.entries(pushSubscription).length !== 0)) return [3 /*break*/, 5];
                 (0, logger_1.logger)("email: ".concat(email, " pushSubscription: ").concat(pushSubscription));
                 return [4 /*yield*/, web_push_1.default.sendNotification(pushSubscription, payload)];
             case 4:
-                _b.sent();
-                _b.label = 5;
+                _e.sent();
+                _e.label = 5;
             case 5:
+                if (FCMToken.length)
+                    pushTokens.push.apply(pushTokens, FCMToken);
+                _e.label = 6;
+            case 6:
                 _i++;
                 return [3 /*break*/, 2];
-            case 6: return [2 /*return*/, res
+            case 7:
+                for (_c = 0, pushTokens_1 = pushTokens; _c < pushTokens_1.length; _c++) {
+                    pushToken = pushTokens_1[_c];
+                    // Each push token looks like ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+                    // Check that all your push tokens appear to be valid Expo push tokens
+                    if (!expo_server_sdk_1.Expo.isExpoPushToken(pushToken)) {
+                        console.error("Push token ".concat(pushToken, " is not a valid Expo push token"));
+                        continue;
+                    }
+                    // Construct a message (see https://docs.expo.io/push-notifications/sending-notifications/)
+                    messages.push({
+                        to: pushToken,
+                        sound: "default",
+                        title: "Afrofit App",
+                        body: text,
+                        data: { withSome: "data" },
+                    });
+                }
+                chunks = expo.chunkPushNotifications(messages);
+                _d = 0, chunks_1 = chunks;
+                _e.label = 8;
+            case 8:
+                if (!(_d < chunks_1.length)) return [3 /*break*/, 13];
+                chunk = chunks_1[_d];
+                _e.label = 9;
+            case 9:
+                _e.trys.push([9, 11, , 12]);
+                return [4 /*yield*/, expo.sendPushNotificationsAsync(chunk)];
+            case 10:
+                ticketChunk = _e.sent();
+                console.log("ticketChunk", ticketChunk);
+                return [3 /*break*/, 12];
+            case 11:
+                error_1 = _e.sent();
+                console.error(error_1);
+                return [3 /*break*/, 12];
+            case 12:
+                _d++;
+                return [3 /*break*/, 8];
+            case 13: return [2 /*return*/, res
                     .status(status_codes_1.STATUS_CODES.CREATED)
                     .send({ message: "Notification sent", result: { isSend: true } })];
-            case 7:
-                error_1 = _b.sent();
-                console.error(error_1);
+            case 14:
+                error_2 = _e.sent();
+                console.error(error_2);
                 return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.INTERNAL_ERROR).send({
                         message: "An error occurred trying to create your notification.",
                         data: {},
                     })];
-            case 8: return [2 /*return*/];
+            case 15: return [2 /*return*/];
         }
     });
 }); };

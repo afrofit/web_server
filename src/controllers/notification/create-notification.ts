@@ -1,10 +1,13 @@
 import { Request, Response } from "express";
 import webPush from "web-push";
+import { Expo } from "expo-server-sdk";
 
 import { logger } from "../../logger";
 import { User } from "../../entity/User";
 import { STATUS_CODES } from "../../types/status-codes";
 import { AppDataSource } from "../../data-source";
+
+const expo = new Expo();
 
 webPush.setVapidDetails(
   process.env.WEB_PUSH_CONTACT,
@@ -16,6 +19,9 @@ export const createNotification = async (req: Request, res: Response) => {
 
   const { email: emails, text } = req.body;
 
+  const pushTokens = [];
+  const messages = [];
+
   try {
     const usersRepo = AppDataSource.getRepository(User);
 
@@ -26,7 +32,7 @@ export const createNotification = async (req: Request, res: Response) => {
     });
 
     for (const email of emails) {
-      const { pushSubscription } = await usersRepo.findOne({
+      const { pushSubscription, FCMToken } = await usersRepo.findOne({
         where: { email },
       });
 
@@ -35,6 +41,38 @@ export const createNotification = async (req: Request, res: Response) => {
         logger(`email: ${email} pushSubscription: ${pushSubscription}`);
 
         await webPush.sendNotification(pushSubscription, payload);
+      }
+
+      if (FCMToken.length) pushTokens.push(...FCMToken);
+    }
+
+    for (let pushToken of pushTokens) {
+      // Each push token looks like ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+
+      // Check that all your push tokens appear to be valid Expo push tokens
+      if (!Expo.isExpoPushToken(pushToken)) {
+        console.error(`Push token ${pushToken} is not a valid Expo push token`);
+        continue;
+      }
+
+      // Construct a message (see https://docs.expo.io/push-notifications/sending-notifications/)
+      messages.push({
+        to: pushToken,
+        sound: "default",
+        title: "Afrofit App",
+        body: text,
+        data: { withSome: "data" },
+      });
+    }
+
+    const chunks = expo.chunkPushNotifications(messages);
+
+    for (const chunk of chunks) {
+      try {
+        const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+        console.log("ticketChunk", ticketChunk);
+      } catch (error) {
+        console.error(error);
       }
     }
 

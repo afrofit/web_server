@@ -11,6 +11,8 @@ import {
   deleteUser,
   getUser,
   inviteUsers,
+  dynamicUpdate,
+  signOut,
 } from "../controllers/user";
 import { fileUpload, isAdmin, isAuthenticated } from "../middleware";
 
@@ -26,6 +28,8 @@ router.post("/subscription/:userId", getUserSubscription);
 router.post("/send-password-reset-link", sendPasswordResetLink);
 router.post("/set-new-password/:userId", setNewPassword);
 router.post("/inviteUsers", isAdmin, inviteUsers);
+router.post("/dynamicUpdate", isAdmin, dynamicUpdate);
+router.post("/signOut", isAuthenticated, signOut);
 
 router.put("/:userId", isAdmin, fileUpload.single("image"), updateUser);
 
