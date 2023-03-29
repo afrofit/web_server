@@ -57,6 +57,7 @@ var retrieveUserSubscription = function (req, res) { return __awaiter(void 0, vo
                     })];
             case 2:
                 existingUser = _a.sent();
+                console.log("existingUser :>> ", existingUser);
                 if (!existingUser)
                     return [2 /*return*/, res
                             .status(status_codes_1.STATUS_CODES.BAD_REQUEST)
@@ -81,7 +82,7 @@ var retrieveUserSubscription = function (req, res) { return __awaiter(void 0, vo
                 endDate = new Date(subscription.current_period_end * 1000);
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.OK)
-                        .send({ activesSubscription: isActive, endDate: endDate })];
+                        .send({ activeSubscription: isActive, endDate: endDate })];
             case 7:
                 error_1 = _a.sent();
                 console.error(error_1);

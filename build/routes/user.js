@@ -18,6 +18,8 @@ router.post("/subscription/:userId", user_1.getUserSubscription);
 router.post("/send-password-reset-link", user_1.sendPasswordResetLink);
 router.post("/set-new-password/:userId", user_1.setNewPassword);
 router.post("/inviteUsers", middleware_1.isAdmin, user_1.inviteUsers);
+router.post("/dynamicUpdate", middleware_1.isAdmin, user_1.dynamicUpdate);
+router.post("/signOut", middleware_1.isAuthenticated, user_1.signOut);
 router.put("/:userId", middleware_1.isAdmin, middleware_1.fileUpload.single("image"), user_1.updateUser);
 router.delete("/:userId", middleware_1.isAdmin, user_1.deleteUser);
 //# sourceMappingURL=user.js.map

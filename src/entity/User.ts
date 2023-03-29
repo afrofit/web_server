@@ -42,6 +42,9 @@ export class User {
   pushSubscription: object;
 
   @Column({ default: true })
+  FCMToken: string[];
+
+  @Column({ default: true })
   isBlock: boolean;
 
   @Column({ default: true })
@@ -106,6 +109,25 @@ export class User {
     return token;
   }
 
+  generateDeviceToken(): string {
+    const token = jwt.sign(
+      {
+        userId: this.id,
+        username: this.username,
+        email: this.email,
+        firstName: this.firstName,
+        lastName: this.lastName,
+        displayPicId: this.displayPicId,
+        joinDate: this.createdAt,
+        lastStoryCompleted: this.lastStoryCompleted,
+        imageUrl: this.imageUrl,
+        role: this.role,
+      },
+      process.env.TOKEN_SECRET!
+    );
+    return token;
+  }
+
   @BeforeInsert()
   async savePassword(): Promise<void> {
     if (this.password) {
@@ -122,5 +144,6 @@ export class User {
     this.lastStoryCompleted = 0;
     this.isBlock = false;
     this.isDeleted = false;
+    this.FCMToken = [];
   }
 }

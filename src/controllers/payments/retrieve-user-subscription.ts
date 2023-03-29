@@ -18,6 +18,8 @@ const retrieveUserSubscription = async (req: Request, res: Response) => {
       where: { _id: formattedUserId },
     });
 
+    console.log("existingUser :>> ", existingUser);
+
     if (!existingUser)
       return res
         .status(STATUS_CODES.BAD_REQUEST)
@@ -45,7 +47,7 @@ const retrieveUserSubscription = async (req: Request, res: Response) => {
     const endDate = new Date(subscription.current_period_end * 1000);
     return res
       .status(STATUS_CODES.OK)
-      .send({ activesSubscription: isActive, endDate });
+      .send({ activeSubscription: isActive, endDate });
   } catch (error) {
     console.error(error);
     return res

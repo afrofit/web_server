@@ -12,10 +12,6 @@ const start = async () => {
   const PORT = process.env.PORT || 9090;
 
   try {
-    console.log(`process.env.MONGO_URL: ${process.env.MONGO_URL}`);
-    console.log(`process.env.TOKEN_HEADER: ${process.env.TOKEN_HEADER}`);
-    console.log(`process.env.TOKEN_SECRET: ${process.env.TOKEN_SECRET}`);
-
     const dataConnection = await AppDataSource.initialize();
 
     if (dataConnection) {

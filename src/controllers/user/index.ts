@@ -8,4 +8,6 @@ export { default as setNewPassword } from "./set-new-password";
 export { default as sendPasswordResetLink } from "./send-password-reset-link";
 export { inviteUsers } from "./invite-users";
 export { updateUser } from "./update-user";
+export { dynamicUpdate } from "./dynamic-update";
 export { deleteUser } from "./delete-user";
+export { signOut } from "./signOut";
