@@ -1,5 +1,8 @@
-export const logger = async (data) => {
+export const logger = async (string, data?) => {
   if (process.env.ISLOG === "true") {
-    console.log(`\n${data}`);
+    if (string && data) {
+      console.log("\n", string, data);
+    }
+    console.log("\n", string);
   }
 };

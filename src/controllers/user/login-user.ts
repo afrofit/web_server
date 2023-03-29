@@ -9,17 +9,18 @@ import validateLoginUser from "./validation/login-user";
 const loginUser = async (req: Request, res: Response) => {
   const { error } = validateLoginUser(req.body);
 
+  logger("login", req.body);
+
   if (error)
     return res.status(STATUS_CODES.BAD_REQUEST).send(error.details[0].message);
 
-  const { email, password, pushSubscription } = req.body;
-
-  logger(`REQBODY: ${req.body}`);
+  const { email, password, pushSubscription, FCMToken, isDevice } = req.body;
 
   try {
     const usersRepo = AppDataSource.getMongoRepository(User);
 
     const user = await usersRepo.findOneBy({ email });
+
     if (!user)
       return res.status(STATUS_CODES.BAD_REQUEST).send("Wrong Email/Password");
 
@@ -28,16 +29,26 @@ const loginUser = async (req: Request, res: Response) => {
     if (!validPassword)
       return res.status(STATUS_CODES.BAD_REQUEST).send("Wrong Email/Password");
 
-    if (user.isBlock)
-      return res.status(STATUS_CODES.BAD_REQUEST).send("User is block");
+    if (user.isBlock || user.isDeleted)
+      return res.status(STATUS_CODES.BAD_REQUEST).send("User is blocked");
 
     if (pushSubscription) {
       user.pushSubscription = pushSubscription;
-      await usersRepo.save(user);
     }
 
+    if (isDevice && FCMToken) {
+      const found = user.FCMToken.find((element) => element === FCMToken);
+      if (!found) user.FCMToken.push(FCMToken);
+    }
+    await usersRepo.save(user);
+
+    let token;
     /** Let's log user in now */
-    const token = user.generateToken();
+    if (isDevice) {
+      token = user.generateDeviceToken();
+    } else {
+      token = user.generateToken();
+    }
 
     return res
       .status(STATUS_CODES.OK)

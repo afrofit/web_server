@@ -36,17 +36,45 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logger = void 0;
-var logger = function (string, data) { return __awaiter(void 0, void 0, void 0, function () {
+exports.signOut = void 0;
+var mongodb_1 = require("mongodb");
+var data_source_1 = require("../../data-source");
+var User_1 = require("../../entity/User");
+var logger_1 = require("../../logger");
+var status_codes_1 = require("../../types/status-codes");
+var signOut = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var FCMToken, userId, userRepo, user, index, error_1;
     return __generator(this, function (_a) {
-        if (process.env.ISLOG === "true") {
-            if (string && data) {
-                console.log("\n", string, data);
-            }
-            console.log("\n", string);
+        switch (_a.label) {
+            case 0:
+                (0, logger_1.logger)("signOut", req.body);
+                FCMToken = req.body.FCMToken;
+                userId = (0, mongodb_1.ObjectID)(req.body.userId);
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 4, , 5]);
+                userRepo = data_source_1.AppDataSource.getMongoRepository(User_1.User);
+                return [4 /*yield*/, userRepo.findOneBy({
+                        where: { _id: userId },
+                    })];
+            case 2:
+                user = _a.sent();
+                index = user.FCMToken.findIndex(function (element) { return element === FCMToken; });
+                user.FCMToken.splice(index, 1);
+                return [4 /*yield*/, userRepo.save(user)];
+            case 3:
+                _a.sent();
+                return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.CREATED).send({ message: "sign out user" })];
+            case 4:
+                error_1 = _a.sent();
+                console.error(error_1);
+                return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.INTERNAL_ERROR).send({
+                        message: "An error occurred trying to get your user.",
+                        data: {},
+                    })];
+            case 5: return [2 /*return*/];
         }
-        return [2 /*return*/];
     });
 }); };
-exports.logger = logger;
-//# sourceMappingURL=index.js.map
+exports.signOut = signOut;
+//# sourceMappingURL=signOut.js.map

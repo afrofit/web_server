@@ -36,17 +36,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logger = void 0;
-var logger = function (string, data) { return __awaiter(void 0, void 0, void 0, function () {
+exports.dynamicUpdate = void 0;
+var status_codes_1 = require("../../types/status-codes");
+var User_1 = require("../../entity/User");
+var data_source_1 = require("../../data-source");
+var logger_1 = require("../../logger");
+var dynamicUpdate = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var usersRepo, results, error_1;
     return __generator(this, function (_a) {
-        if (process.env.ISLOG === "true") {
-            if (string && data) {
-                console.log("\n", string, data);
-            }
-            console.log("\n", string);
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                (0, logger_1.logger)("dynamicUpdate", JSON.stringify(req.body));
+                usersRepo = data_source_1.AppDataSource.getMongoRepository(User_1.User);
+                return [4 /*yield*/, usersRepo.updateMany({}, { $set: req.body })];
+            case 1:
+                results = _a.sent();
+                return [2 /*return*/, res
+                        .status(status_codes_1.STATUS_CODES.CREATED)
+                        .send({ message: "User updated", data: results })];
+            case 2:
+                error_1 = _a.sent();
+                console.error(error_1);
+                return [2 /*return*/, res
+                        .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)
+                        .send("An error occurred trying to create your account.")];
+            case 3: return [2 /*return*/];
         }
-        return [2 /*return*/];
     });
 }); };
-exports.logger = logger;
-//# sourceMappingURL=index.js.map
+exports.dynamicUpdate = dynamicUpdate;
+//# sourceMappingURL=dynamic-update.js.map

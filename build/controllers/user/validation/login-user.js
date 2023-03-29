@@ -9,6 +9,8 @@ var validateLoginUser = function (userData) {
         email: joi_1.default.string().required().email(),
         password: joi_1.default.string().required().min(6).max(255),
         pushSubscription: joi_1.default.object().optional(),
+        FCMToken: joi_1.default.string().optional(),
+        isDevice: joi_1.default.boolean().optional(),
     });
     return schema.validate(userData);
 };
