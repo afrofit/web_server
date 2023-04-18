@@ -25,6 +25,7 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
     clampedUserSteps,
     chapterCompleted,
     storyCompleted,
+    isDevice
   } = req.body.data;
 
   const formattedUserId = ObjectID(userId);
@@ -155,7 +156,13 @@ const saveUserDanceActivity = async (req: Request, res: Response) => {
     let token: any = null;
     if (storyCompleted) {
       existingUser.lastStoryCompleted += 1;
-      token = existingUser.generateToken();
+
+    // genrate device tokan
+      if (isDevice) {
+        token = existingUser.generateDeviceToken();
+      } else {
+        token =  existingUser.generateToken();
+      }
     }
 
     await leaderboardScoreRepo.save(userLeaderboardScore);
