@@ -43,23 +43,23 @@ var status_codes_1 = require("../../types/status-codes");
 var User_1 = require("../../entity/User");
 var logger_1 = require("../../logger");
 var updateUserDp = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, displayPicId, formattedUserId, usersRepo, existingUser, user, token, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var userId, _a, displayPicId, isDevice, formattedUserId, usersRepo, existingUser, user, token, error_1;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 (0, logger_1.logger)("req.file: ".concat(req.file));
                 userId = req.params.userId;
-                displayPicId = req.body.displayPicId;
+                _a = req.body, displayPicId = _a.displayPicId, isDevice = _a.isDevice;
                 formattedUserId = (0, mongodb_1.ObjectID)(userId);
-                _a.label = 1;
+                _b.label = 1;
             case 1:
-                _a.trys.push([1, 4, , 5]);
+                _b.trys.push([1, 4, , 5]);
                 usersRepo = data_source_1.AppDataSource.getMongoRepository(User_1.User);
                 return [4 /*yield*/, usersRepo.findOneBy({
                         where: { _id: formattedUserId },
                     })];
             case 2:
-                existingUser = _a.sent();
+                existingUser = _b.sent();
                 if (!existingUser)
                     return [2 /*return*/, res
                             .status(status_codes_1.STATUS_CODES.BAD_REQUEST)
@@ -83,14 +83,21 @@ var updateUserDp = function (req, res) { return __awaiter(void 0, void 0, void 0
                 }
                 return [4 /*yield*/, usersRepo.save(existingUser)];
             case 3:
-                user = _a.sent();
-                token = existingUser.generateToken();
+                user = _b.sent();
+                token = void 0;
+                // genrate device tokan
+                if (isDevice) {
+                    token = existingUser.generateDeviceToken();
+                }
+                else {
+                    token = existingUser.generateToken();
+                }
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.OK)
                         .header(process.env.TOKEN_HEADER, token)
                         .send({ data: user, token: token })];
             case 4:
-                error_1 = _a.sent();
+                error_1 = _b.sent();
                 console.error(error_1);
                 return [2 /*return*/, res
                         .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)

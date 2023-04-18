@@ -20,7 +20,9 @@ const updateUserDp = async (req: Request, res: Response) => {
 
   const { userId } = req.params;
 
-  const { displayPicId }: { displayPicId: number } = req.body;
+  
+  
+  const { displayPicId, isDevice }: { displayPicId: number, isDevice: string  } = req.body;
 
   const formattedUserId = ObjectID(userId);
 
@@ -56,7 +58,15 @@ const updateUserDp = async (req: Request, res: Response) => {
 
     const user = await usersRepo.save(existingUser);
 
-    const token = existingUser.generateToken();
+    
+    let token;
+
+    // genrate device tokan
+    if (isDevice) {
+      token = existingUser.generateDeviceToken();
+    } else {
+      token =  existingUser.generateToken();
+    }
 
     return res
       .status(STATUS_CODES.OK)
