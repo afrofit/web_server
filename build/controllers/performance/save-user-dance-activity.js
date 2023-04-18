@@ -50,12 +50,12 @@ var get_active_leaderboard_1 = require("../functions/get-active-leaderboard");
 var logger_1 = require("../../logger");
 var CALORIE_MULTPLIER = 1.75;
 var saveUserDanceActivity = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, userId, chapterId, playedStoryId, _b, timeDancedMS, userSteps, clampedUserSteps, chapterCompleted, storyCompleted, formattedUserId, formattedPlayedStoryId, usersRepo, existingUser, playedStoryRepo, playedChapterRepo, performanceRepo, todaysActivityRepo, leaderboardScoreRepo, todaysActivities, todaysActivity, playedChapter, playedStory, performance, activeLeaderboard, userLeaderboardScore, token, error_1;
+    var _a, userId, chapterId, playedStoryId, _b, timeDancedMS, userSteps, clampedUserSteps, chapterCompleted, storyCompleted, isDevice, formattedUserId, formattedPlayedStoryId, usersRepo, existingUser, playedStoryRepo, playedChapterRepo, performanceRepo, todaysActivityRepo, leaderboardScoreRepo, todaysActivities, todaysActivity, playedChapter, playedStory, performance, activeLeaderboard, userLeaderboardScore, token, error_1;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
                 _a = req.params, userId = _a.userId, chapterId = _a.chapterId, playedStoryId = _a.playedStoryId;
-                _b = req.body.data, timeDancedMS = _b.timeDancedMS, userSteps = _b.userSteps, clampedUserSteps = _b.clampedUserSteps, chapterCompleted = _b.chapterCompleted, storyCompleted = _b.storyCompleted;
+                _b = req.body.data, timeDancedMS = _b.timeDancedMS, userSteps = _b.userSteps, clampedUserSteps = _b.clampedUserSteps, chapterCompleted = _b.chapterCompleted, storyCompleted = _b.storyCompleted, isDevice = _b.isDevice;
                 formattedUserId = (0, mongodb_1.ObjectID)(userId);
                 formattedPlayedStoryId = (0, mongodb_1.ObjectID)(playedStoryId);
                 _c.label = 1;
@@ -174,7 +174,13 @@ var saveUserDanceActivity = function (req, res) { return __awaiter(void 0, void 
                 token = null;
                 if (storyCompleted) {
                     existingUser.lastStoryCompleted += 1;
-                    token = existingUser.generateToken();
+                    // genrate device tokan
+                    if (isDevice) {
+                        token = existingUser.generateDeviceToken();
+                    }
+                    else {
+                        token = existingUser.generateToken();
+                    }
                 }
                 return [4 /*yield*/, leaderboardScoreRepo.save(userLeaderboardScore)];
             case 11:
