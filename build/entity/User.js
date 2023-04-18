@@ -74,6 +74,24 @@ var User = /** @class */ (function () {
             joinDate: this.createdAt,
             lastStoryCompleted: this.lastStoryCompleted,
             imageUrl: this.imageUrl,
+            role: this.role,
+        }, process.env.TOKEN_SECRET, {
+            expiresIn: "2h",
+        });
+        return token;
+    };
+    User.prototype.generateDeviceToken = function () {
+        var token = jsonwebtoken_1.default.sign({
+            userId: this.id,
+            username: this.username,
+            email: this.email,
+            firstName: this.firstName,
+            lastName: this.lastName,
+            displayPicId: this.displayPicId,
+            joinDate: this.createdAt,
+            lastStoryCompleted: this.lastStoryCompleted,
+            imageUrl: this.imageUrl,
+            role: this.role,
         }, process.env.TOKEN_SECRET);
         return token;
     };
@@ -89,7 +107,11 @@ var User = /** @class */ (function () {
                         hashedPassword = _a.sent();
                         this.password = hashedPassword;
                         _a.label = 2;
-                    case 2: return [2 /*return*/];
+                    case 2:
+                        if (!this.role) {
+                            this.role = "user";
+                        }
+                        return [2 /*return*/];
                 }
             });
         });
@@ -98,6 +120,9 @@ var User = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 this.lastStoryCompleted = 0;
+                this.isBlock = false;
+                this.isDeleted = false;
+                this.FCMToken = [];
                 return [2 /*return*/];
             });
         });
@@ -123,13 +148,33 @@ var User = /** @class */ (function () {
         __metadata("design:type", String)
     ], User.prototype, "lastName", void 0);
     __decorate([
-        (0, typeorm_1.Column)({ default: "" }),
+        (0, typeorm_1.Column)("string", { default: true }),
         __metadata("design:type", String)
     ], User.prototype, "imageUrl", void 0);
     __decorate([
         (0, typeorm_1.Column)(),
         __metadata("design:type", String)
     ], User.prototype, "password", void 0);
+    __decorate([
+        (0, typeorm_1.Column)({ default: true }),
+        __metadata("design:type", String)
+    ], User.prototype, "role", void 0);
+    __decorate([
+        (0, typeorm_1.Column)({ default: true }),
+        __metadata("design:type", Object)
+    ], User.prototype, "pushSubscription", void 0);
+    __decorate([
+        (0, typeorm_1.Column)({ default: true }),
+        __metadata("design:type", Array)
+    ], User.prototype, "FCMToken", void 0);
+    __decorate([
+        (0, typeorm_1.Column)({ default: true }),
+        __metadata("design:type", Boolean)
+    ], User.prototype, "isBlock", void 0);
+    __decorate([
+        (0, typeorm_1.Column)({ default: true }),
+        __metadata("design:type", Boolean)
+    ], User.prototype, "isDeleted", void 0);
     __decorate([
         (0, typeorm_1.Column)({ type: "text", nullable: true }),
         __metadata("design:type", String)
@@ -139,13 +184,17 @@ var User = /** @class */ (function () {
         __metadata("design:type", Number)
     ], User.prototype, "displayPicId", void 0);
     __decorate([
-        (0, typeorm_1.Column)({ default: 0 }),
+        (0, typeorm_1.Column)({ default: true }),
         __metadata("design:type", Number)
     ], User.prototype, "lastStoryCompleted", void 0);
     __decorate([
         (0, typeorm_1.Column)({ nullable: true }),
         __metadata("design:type", String)
     ], User.prototype, "stripeCustomerId", void 0);
+    __decorate([
+        (0, typeorm_1.Column)({ nullable: true }),
+        __metadata("design:type", Number)
+    ], User.prototype, "notificationCount", void 0);
     __decorate([
         (0, typeorm_1.Column)({ nullable: true }),
         __metadata("design:type", String)

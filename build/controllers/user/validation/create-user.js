@@ -12,6 +12,7 @@ var validateCreateUser = function (userData) {
         firstName: joi_1.default.string().required().min(2).max(255),
         lastName: joi_1.default.string().required().min(2).max(255),
         displayPicId: joi_1.default.number().min(1).max(16),
+        role: joi_1.default.string().optional(),
     });
     return schema.validate(userData);
 };

@@ -6,9 +6,12 @@ import { AppDataSource } from "../../data-source";
 import { User } from "../../entity/User";
 import { STATUS_CODES } from "../../types/status-codes";
 import validateResetLink from "./validation/send-password-reset-link";
-import { nodeMailerTransporter } from "../../config";
+import { mailer } from "../../mailer";
+import { logger } from "../../logger";
 
 const sendPasswordResetLink = async (req: Request, res: Response) => {
+  logger(`sendPasswordResetLink ReqBody: ${req.body}`);
+
   const { error } = validateResetLink(req.body);
 
   if (error)
@@ -32,28 +35,22 @@ const sendPasswordResetLink = async (req: Request, res: Response) => {
     const resetLink = `${process.env.CLIENT_URL}/set-new-password/${existingUser.id}/${hash}`;
 
     // Email this link
-    console.log("resetLink", resetLink);
+    logger(`resetLink: ${resetLink}`);
 
-    const mailOptions = {
-      from: `"Afrofit App" <${process.env.EMAIL_USER}>`, // sender address
-      to: email, // list of receivers
-      subject: "Welcome!",
-      template: "password_reset", // the name of the template file i.e email.handlebars
-      context: {
-        name: existingUser.username, // replace {{name}} with Adebola
-        resetLink: resetLink,
-      },
+    // send mail
+    const mailInfo = {
+      to: existingUser.email,
+      subject: `Your password reset link`,
+      html: `<div><p>Hii ${existingUser.username}</p>
+      <p>We're sending you this email because you requested a password reset. Click on this link to set a new password</p>
+      <a href=${resetLink}>Set a new password</a>
+      </div>`,
     };
+    await mailer(mailInfo);
 
-    // trigger the sending of the E-mail
-    nodeMailerTransporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        return console.log(error);
-      }
-      console.log("Message sent: " + info.response);
-    });
-
-    return res.status(STATUS_CODES.OK).send({ result: true });
+    return res
+      .status(STATUS_CODES.OK)
+      .send({ message: "Password reset mail sent", result: { isSend: true } });
   } catch (error) {
     console.error(error);
     return res

@@ -53,16 +53,20 @@ var performance_1 = require("./routes/performance");
 var marathon_1 = require("./routes/marathon");
 var payments_1 = require("./routes/payments");
 var feedback_1 = require("./routes/feedback");
+var class_1 = require("./routes/class");
+var shop_1 = require("./routes/shop");
+var event_1 = require("./routes/event");
+var activities_1 = require("./routes/activities");
+var notification_1 = require("./routes/notification");
 var stripe_1 = __importDefault(require("stripe"));
 /* App Setup */
 var app = (0, express_1.default)();
 exports.app = app;
 app.set("trust proxy", true);
 app.use((0, body_parser_1.json)());
-app.use((0, morgan_1.default)("dev"));
-app.use((0, helmet_1.default)({
-    crossOriginResourcePolicy: false,
-}));
+if (process.env.ISLOG === "true")
+    app.use((0, morgan_1.default)("dev"));
+app.use(helmet_1.default.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use((0, cookie_parser_1.default)());
 app.use((0, cors_1.default)());
 // for parsing multipart/form-data
@@ -78,6 +82,11 @@ app.use("/api/performance", performance_1.performanceRoutes);
 app.use("/api/marathon", marathon_1.marathonRoutes);
 app.use("/api/payments", payments_1.paymentRoutes);
 app.use("/api/feedbacks", feedback_1.feedbackRoutes);
+app.use("/api/classes", class_1.classRoutes);
+app.use("/api/shops", shop_1.shopRoutes);
+app.use("/api/events", event_1.eventRoutes);
+app.use("/api/activities", activities_1.activitiesRoutes);
+app.use("/api/notifications", notification_1.notificationRoutes);
 /* Catch-Alls */
 app.get("/api", function (req, res) {
     return res.send("Welcome to a Afrofit API.");

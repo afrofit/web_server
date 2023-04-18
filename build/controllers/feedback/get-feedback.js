@@ -36,29 +36,41 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var data_source_1 = require("./../../data-source");
-var status_codes_1 = require("../../types/status-codes");
+exports.getFeedbackById = void 0;
+var mongodb_1 = require("mongodb");
+var data_source_1 = require("../../data-source");
 var Feedback_1 = require("../../entity/Feedback");
-var getFeedback = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var feedbacksRepo, results, error_1;
+var logger_1 = require("../../logger");
+var status_codes_1 = require("../../types/status-codes");
+var getFeedbackById = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var feedbackId, feedbackRepo, results, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                feedbacksRepo = data_source_1.AppDataSource.getMongoRepository(Feedback_1.Feedback);
-                return [4 /*yield*/, feedbacksRepo.find({ where: { isHide: false } })];
+                (0, logger_1.logger)("getFeedbackById: ".concat(JSON.stringify(req.params)));
+                feedbackId = (0, mongodb_1.ObjectID)(req.params.feedbackId);
+                _a.label = 1;
             case 1:
-                results = _a.sent();
-                return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.CREATED).send(results)];
+                _a.trys.push([1, 3, , 4]);
+                feedbackRepo = data_source_1.AppDataSource.getMongoRepository(Feedback_1.Feedback);
+                return [4 /*yield*/, feedbackRepo.findOneBy({
+                        where: { _id: feedbackId },
+                    })];
             case 2:
+                results = _a.sent();
+                return [2 /*return*/, res
+                        .status(status_codes_1.STATUS_CODES.CREATED)
+                        .send({ message: "get feedback", data: results })];
+            case 3:
                 error_1 = _a.sent();
                 console.error(error_1);
-                return [2 /*return*/, res
-                        .status(status_codes_1.STATUS_CODES.INTERNAL_ERROR)
-                        .send("An error occurred trying to create your account.")];
-            case 3: return [2 /*return*/];
+                return [2 /*return*/, res.status(status_codes_1.STATUS_CODES.INTERNAL_ERROR).send({
+                        message: "An error occurred trying to get your feedback.",
+                        data: {},
+                    })];
+            case 4: return [2 /*return*/];
         }
     });
 }); };
-exports.default = getFeedback;
+exports.getFeedbackById = getFeedbackById;
 //# sourceMappingURL=get-feedback.js.map

@@ -9,6 +9,7 @@ const validateCreateUser = (userData: CreateUserRequestType) => {
     firstName: Joi.string().required().min(2).max(255),
     lastName: Joi.string().required().min(2).max(255),
     displayPicId: Joi.number().min(1).max(16),
+    role: Joi.string().optional(),
   });
 
   return schema.validate(userData);

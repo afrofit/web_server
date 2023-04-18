@@ -9,6 +9,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BeforeInsert,
+  BeforeUpdate,
 } from "typeorm";
 
 @Entity("users")
@@ -28,11 +29,26 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column({ default: "" })
+  @Column("string", { default: true })
   imageUrl: string;
 
   @Column()
   password: string;
+
+  @Column({ default: true })
+  role: string;
+
+  @Column({ default: true })
+  pushSubscription: object;
+
+  @Column({ default: true })
+  FCMToken: string[];
+
+  @Column({ default: true })
+  isBlock: boolean;
+
+  @Column({ default: true })
+  isDeleted: boolean;
 
   @Column({ type: "text", nullable: true })
   password_reset_token: string;
@@ -40,11 +56,14 @@ export class User {
   @Column()
   displayPicId: number;
 
-  @Column({ default: 0 })
+  @Column({ default: true })
   lastStoryCompleted: number;
 
   @Column({ nullable: true })
   stripeCustomerId: string;
+
+  @Column({ nullable: true })
+  notificationCount: number;
 
   @Column({ nullable: true })
   lastActiveSubscriptionId: string;
@@ -80,6 +99,29 @@ export class User {
         joinDate: this.createdAt,
         lastStoryCompleted: this.lastStoryCompleted,
         imageUrl: this.imageUrl,
+        role: this.role,
+      },
+      process.env.TOKEN_SECRET!,
+      {
+        expiresIn: "2h",
+      }
+    );
+    return token;
+  }
+
+  generateDeviceToken(): string {
+    const token = jwt.sign(
+      {
+        userId: this.id,
+        username: this.username,
+        email: this.email,
+        firstName: this.firstName,
+        lastName: this.lastName,
+        displayPicId: this.displayPicId,
+        joinDate: this.createdAt,
+        lastStoryCompleted: this.lastStoryCompleted,
+        imageUrl: this.imageUrl,
+        role: this.role,
       },
       process.env.TOKEN_SECRET!
     );
@@ -92,10 +134,16 @@ export class User {
       const hashedPassword = await this.hashPassword(this.password);
       this.password = hashedPassword;
     }
+    if (!this.role) {
+      this.role = "user";
+    }
   }
 
   @BeforeInsert()
   async updateLastStoryCompleted(): Promise<void> {
     this.lastStoryCompleted = 0;
+    this.isBlock = false;
+    this.isDeleted = false;
+    this.FCMToken = [];
   }
 }

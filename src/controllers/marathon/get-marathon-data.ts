@@ -7,6 +7,7 @@ import { AppDataSource } from "../../data-source";
 import { STATUS_CODES } from "../../types/status-codes";
 import { createWeeklyLeaderboard } from "../functions/create-weekly-leaderboard";
 import { User } from "../../entity/User";
+import { logger } from "../../logger";
 
 const getMarathonData = async (req: Request, res: Response) => {
   const { userId } = req.params;
@@ -42,7 +43,7 @@ const getMarathonData = async (req: Request, res: Response) => {
       take: LOWER_LIMIT,
     });
 
-    console.log("leaderboardScores", leaderboardScores);
+    logger(`leaderboardScores: ${leaderboardScores}`);
 
     let userLeaderboardScore = await leaderboardScoresRepo.findOne({
       where: {
@@ -62,7 +63,7 @@ const getMarathonData = async (req: Request, res: Response) => {
       await leaderboardScoresRepo.save(userLeaderboardScore);
     }
 
-    console.log("userLeaderboardScore", userLeaderboardScore);
+    logger(`userLeaderboardScore: ${userLeaderboardScore}`);
 
     const transformedScores = leaderboardScores.map((score) => {
       return {
@@ -72,7 +73,7 @@ const getMarathonData = async (req: Request, res: Response) => {
       };
     });
 
-    console.log("transformedScores", transformedScores);
+    logger(`transformedScores: ${transformedScores}`);
 
     const transformedUserScore = {
       name: userLeaderboardScore.username,
@@ -80,7 +81,7 @@ const getMarathonData = async (req: Request, res: Response) => {
       score: userLeaderboardScore.bodyMovements,
     };
 
-    console.log("transformedUserScore", transformedUserScore);
+    logger(`transformedUserScore ${transformedUserScore}`);
 
     const userScoreIndex = transformedScores
       .map((score) => score.name)

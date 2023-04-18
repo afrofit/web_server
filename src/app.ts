@@ -11,6 +11,11 @@ import { performanceRoutes } from "./routes/performance";
 import { marathonRoutes } from "./routes/marathon";
 import { paymentRoutes } from "./routes/payments";
 import { feedbackRoutes } from "./routes/feedback";
+import { classRoutes } from "./routes/class";
+import { shopRoutes } from "./routes/shop";
+import { eventRoutes } from "./routes/event";
+import { activitiesRoutes } from "./routes/activities";
+import { notificationRoutes } from "./routes/notification";
 import Stripe from "stripe";
 
 /* App Setup */
@@ -18,12 +23,11 @@ import Stripe from "stripe";
 const app = express();
 app.set("trust proxy", true);
 app.use(json());
-app.use(logger("dev"));
-app.use(
-  helmet({
-    crossOriginResourcePolicy: false,
-  })
-);
+
+if (process.env.ISLOG === "true") app.use(logger("dev"));
+
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+
 app.use(cookieParser());
 
 app.use(cors());
@@ -43,6 +47,11 @@ app.use("/api/performance", performanceRoutes);
 app.use("/api/marathon", marathonRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/feedbacks", feedbackRoutes);
+app.use("/api/classes", classRoutes);
+app.use("/api/shops", shopRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/activities", activitiesRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 /* Catch-Alls */
 

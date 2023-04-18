@@ -4,6 +4,7 @@ import { ObjectID } from "mongodb";
 import { stripe } from "../../app";
 import { AppDataSource } from "../../data-source";
 import { User } from "../../entity/User";
+import { logger } from "../../logger";
 import { STATUS_CODES } from "../../types/status-codes";
 import validateRetrieveStripeSession from "./validation/retrieve-stripe-session";
 
@@ -31,7 +32,7 @@ const retrieveStripeSession = async (req: Request, res: Response) => {
 
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-    console.log("session", session);
+    logger(`session: ${session}`);
 
     /** Now let's conditionally update the user's stripeCustomerId */
     if (
