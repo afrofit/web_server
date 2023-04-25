@@ -9,27 +9,45 @@ import { CreateClassType } from "./types/create-class";
 export const createClass = async (req: Request, res: Response) => {
   logger(`createClass: ${JSON.stringify(req.body)}`);
 
-  const { files }: any = req;
-  const { description, title }: CreateClassType = req.body;
+  const { file }: any = req;
+  const { description, title, videoUrl }: CreateClassType = req.body;
 
   try {
     const classRepo = AppDataSource.getMongoRepository(Class);
 
+    const videoLink = videoUrl.split("/");
+
     const classData = new Class();
+
     classData.title = title;
     classData.description = description;
+
+    classData.videoUrl = videoUrl;
+    if (
+      videoLink[2] === "drive.google.com" &&
+      videoLink[videoLink.length - 1] === "view"
+    )
+      classData.videoUrl = `https://drive.google.com/uc?id=${videoLink[5]}`;
+
     classData.isHide = false;
 
-    for (const file of files) {
+    if (file) {
       const fileType = file.mimetype.split("/")[0];
       if (fileType === "image") {
         classData.imageUrl = file.filename;
       }
-
-      if (fileType === "video") {
-        classData.videoUrl = file.filename;
-      }
     }
+
+    // for (const file of files) {
+    //   const fileType = file.mimetype.split("/")[0];
+    //   if (fileType === "image") {
+    //     classData.imageUrl = file.filename;
+    //   }
+
+    // if (fileType === "video") {
+    //   classData.videoUrl = file.filename;
+    // }
+    // }
 
     const results = await classRepo.save(classData);
 

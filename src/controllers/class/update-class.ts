@@ -11,13 +11,15 @@ import { CreateClassType } from "./types/create-class";
 export const updateClass = async (req: Request, res: Response) => {
   logger(`updateClass: ${JSON.stringify(req.body)}`);
 
-  const { files }: any = req;
-  const { description, title, isHide }: CreateClassType = req.body;
+  const { file }: any = req;
+  const { description, title, isHide, videoUrl }: CreateClassType = req.body;
 
   const classId = ObjectID(req.params.classId);
 
   try {
     const classRepo = AppDataSource.getMongoRepository(Class);
+
+    const videoLink = videoUrl.split("/");
 
     const existingClass = await classRepo.findOneBy({
       where: { _id: classId },
@@ -28,10 +30,19 @@ export const updateClass = async (req: Request, res: Response) => {
 
     if (title) existingClass.title = title;
     if (description) existingClass.description = description;
+    if (videoUrl) {
+      existingClass.videoUrl = videoUrl;
+
+      if (
+        videoLink[2] === "drive.google.com" &&
+        videoLink[videoLink.length - 1] === "view"
+      )
+        existingClass.videoUrl = `https://drive.google.com/uc?id=${videoLink[5]}`;
+    }
     if (isHide === "true") existingClass.isHide = true;
     if (isHide === "false") existingClass.isHide = false;
 
-    for (const file of files) {
+    if (file) {
       const fileType = file.mimetype.split("/")[0];
       if (fileType === "image") {
         if (existsSync(`./public/${existingClass.imageUrl}`))
@@ -39,14 +50,24 @@ export const updateClass = async (req: Request, res: Response) => {
 
         existingClass.imageUrl = file.filename;
       }
-
-      if (fileType === "video") {
-        if (existsSync(`./public/${existingClass.videoUrl}`))
-          unlinkSync(`./public/${existingClass.videoUrl}`);
-
-        existingClass.videoUrl = file.filename;
-      }
     }
+
+    // for (const file of files) {
+    // const fileType = file.mimetype.split("/")[0];
+    // if (fileType === "image") {
+    //   if (existsSync(`./public/${existingClass.imageUrl}`))
+    //     unlinkSync(`./public/${existingClass.imageUrl}`);
+
+    //   existingClass.imageUrl = file.filename;
+    // }
+
+    // if (fileType === "video") {
+    //   if (existsSync(`./public/${existingClass.videoUrl}`))
+    //     unlinkSync(`./public/${existingClass.videoUrl}`);
+
+    //   existingClass.videoUrl = file.filename;
+    // }
+    // }
 
     const results = await classRepo.save(existingClass);
 
