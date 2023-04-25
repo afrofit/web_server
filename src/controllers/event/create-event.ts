@@ -9,28 +9,46 @@ import { CreateEventType } from "./types/create-event";
 export const createEvent = async (req: Request, res: Response) => {
   logger(`createEvent: ${JSON.stringify(req.body)}`);
 
-  const { files }: any = req;
-  const { description, title, paymentLinks }: CreateEventType = req.body;
+  const { file }: any = req;
+  const { description, title, paymentLinks, videoUrl }: CreateEventType =
+    req.body;
 
   try {
     const eventRepo = AppDataSource.getMongoRepository(Event);
 
+    const videoLink = videoUrl.split("/");
+
     const eventData = new Event();
     eventData.title = title;
     eventData.description = description;
-    eventData.isHide = false;
-    eventData.paymentLinks = paymentLinks ?? "";
 
-    for (const file of files) {
+    eventData.videoUrl = videoUrl;
+    if (
+      videoLink[2] === "drive.google.com" &&
+      videoLink[videoLink.length - 1] === "view"
+    )
+      eventData.videoUrl = `https://drive.google.com/uc?id=${videoLink[5]}`;
+
+    eventData.paymentLinks = paymentLinks ?? "";
+    eventData.isHide = false;
+
+    if (file) {
       const fileType = file.mimetype.split("/")[0];
       if (fileType === "image") {
         eventData.imageUrl = file.filename;
       }
-
-      if (fileType === "video") {
-        eventData.videoUrl = file.filename;
-      }
     }
+
+    // for (const file of files) {
+    //   const fileType = file.mimetype.split("/")[0];
+    //   if (fileType === "image") {
+    //     eventData.imageUrl = file.filename;
+    //   }
+
+    //   if (fileType === "video") {
+    //     eventData.videoUrl = file.filename;
+    //   }
+    // }
 
     const results = await eventRepo.save(eventData);
 

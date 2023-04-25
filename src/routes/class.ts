@@ -19,9 +19,9 @@ router.get("/", isAuthenticated, getAllClass);
 
 router.get("/:classId", isAuthenticated, getClassById);
 
-router.post("/create", isAdmin, fileUpload.array("files", 2), createClass);
+router.post("/create", isAdmin, fileUpload.single("file"), createClass);
 
-router.put("/:classId", isAdmin, fileUpload.array("files", 2), updateClass);
+router.put("/:classId", isAdmin, fileUpload.single("file"), updateClass);
 
 router.delete("/:classId", isAdmin, deleteClass);
 
