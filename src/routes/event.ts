@@ -19,9 +19,9 @@ router.get("/", isAuthenticated, getAllEvent);
 
 router.get("/:eventId", isAuthenticated, getEventById);
 
-router.post("/create", isAdmin, fileUpload.array("files", 2), createEvent);
+router.post("/create", isAdmin, fileUpload.single("file"), createEvent);
 
-router.put("/:eventId", isAdmin, fileUpload.array("files", 2), updateEvent);
+router.put("/:eventId", isAdmin, fileUpload.single("file"), updateEvent);
 
 router.delete("/:eventId", isAdmin, deleteEvent);
 
