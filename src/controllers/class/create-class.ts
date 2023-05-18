@@ -15,19 +15,12 @@ export const createClass = async (req: Request, res: Response) => {
   try {
     const classRepo = AppDataSource.getMongoRepository(Class);
 
-    const videoLink = videoUrl.split("/");
-
     const classData = new Class();
 
     classData.title = title;
     classData.description = description;
 
-    classData.videoUrl = videoUrl;
-    if (
-      videoLink[2] === "drive.google.com" &&
-      videoLink[videoLink.length - 1] === "view"
-    )
-      classData.videoUrl = `https://drive.google.com/uc?id=${videoLink[5]}`;
+    classData.videoUrl = JSON.parse(videoUrl);
 
     classData.isHide = false;
 
@@ -37,17 +30,6 @@ export const createClass = async (req: Request, res: Response) => {
         classData.imageUrl = file.filename;
       }
     }
-
-    // for (const file of files) {
-    //   const fileType = file.mimetype.split("/")[0];
-    //   if (fileType === "image") {
-    //     classData.imageUrl = file.filename;
-    //   }
-
-    // if (fileType === "video") {
-    //   classData.videoUrl = file.filename;
-    // }
-    // }
 
     const results = await classRepo.save(classData);
 

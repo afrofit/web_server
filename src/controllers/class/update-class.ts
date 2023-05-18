@@ -19,8 +19,6 @@ export const updateClass = async (req: Request, res: Response) => {
   try {
     const classRepo = AppDataSource.getMongoRepository(Class);
 
-    const videoLink = videoUrl.split("/");
-
     const existingClass = await classRepo.findOneBy({
       where: { _id: classId },
     });
@@ -30,15 +28,9 @@ export const updateClass = async (req: Request, res: Response) => {
 
     if (title) existingClass.title = title;
     if (description) existingClass.description = description;
-    if (videoUrl) {
-      existingClass.videoUrl = videoUrl;
 
-      if (
-        videoLink[2] === "drive.google.com" &&
-        videoLink[videoLink.length - 1] === "view"
-      )
-        existingClass.videoUrl = `https://drive.google.com/uc?id=${videoLink[5]}`;
-    }
+    existingClass.videoUrl = JSON.parse(videoUrl);
+
     if (isHide === "true") existingClass.isHide = true;
     if (isHide === "false") existingClass.isHide = false;
 
@@ -51,23 +43,6 @@ export const updateClass = async (req: Request, res: Response) => {
         existingClass.imageUrl = file.filename;
       }
     }
-
-    // for (const file of files) {
-    // const fileType = file.mimetype.split("/")[0];
-    // if (fileType === "image") {
-    //   if (existsSync(`./public/${existingClass.imageUrl}`))
-    //     unlinkSync(`./public/${existingClass.imageUrl}`);
-
-    //   existingClass.imageUrl = file.filename;
-    // }
-
-    // if (fileType === "video") {
-    //   if (existsSync(`./public/${existingClass.videoUrl}`))
-    //     unlinkSync(`./public/${existingClass.videoUrl}`);
-
-    //   existingClass.videoUrl = file.filename;
-    // }
-    // }
 
     const results = await classRepo.save(existingClass);
 
