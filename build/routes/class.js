@@ -14,7 +14,7 @@ exports.classRoutes = router;
  * */
 router.get("/", middleware_1.isAuthenticated, class_1.getAllClass);
 router.get("/:classId", middleware_1.isAuthenticated, class_1.getClassById);
-router.post("/create", middleware_1.isAdmin, middleware_1.fileUpload.array("files", 2), class_1.createClass);
-router.put("/:classId", middleware_1.isAdmin, middleware_1.fileUpload.array("files", 2), class_1.updateClass);
+router.post("/create", middleware_1.isAdmin, middleware_1.fileUpload.single("file"), class_1.createClass);
+router.put("/:classId", middleware_1.isAdmin, middleware_1.fileUpload.single("file"), class_1.updateClass);
 router.delete("/:classId", middleware_1.isAdmin, class_1.deleteClass);
 //# sourceMappingURL=class.js.map

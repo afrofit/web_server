@@ -22,7 +22,7 @@ export class Class {
   imageUrl: string;
 
   @Column({ default: true })
-  videoUrl: object[];
+  videoUrl: string;
 
   @Column({ default: true })
   isHide: Boolean;

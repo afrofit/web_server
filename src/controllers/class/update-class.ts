@@ -29,7 +29,15 @@ export const updateClass = async (req: Request, res: Response) => {
     if (title) existingClass.title = title;
     if (description) existingClass.description = description;
 
-    existingClass.videoUrl = JSON.parse(videoUrl);
+    if (videoUrl) {
+      const videoLink = videoUrl.split("/");
+
+      existingClass.videoUrl = videoUrl;
+
+      if (videoLink[2] === "youtu.be") {
+        existingClass.videoUrl = videoLink[3];
+      }
+    }
 
     if (isHide === "true") existingClass.isHide = true;
     if (isHide === "false") existingClass.isHide = false;

@@ -14,7 +14,7 @@ exports.eventRoutes = router;
  * */
 router.get("/", middleware_1.isAuthenticated, event_1.getAllEvent);
 router.get("/:eventId", middleware_1.isAuthenticated, event_1.getEventById);
-router.post("/create", middleware_1.isAdmin, middleware_1.fileUpload.array("files", 2), event_1.createEvent);
-router.put("/:eventId", middleware_1.isAdmin, middleware_1.fileUpload.array("files", 2), event_1.updateEvent);
+router.post("/create", middleware_1.isAdmin, middleware_1.fileUpload.single("file"), event_1.createEvent);
+router.put("/:eventId", middleware_1.isAdmin, middleware_1.fileUpload.single("file"), event_1.updateEvent);
 router.delete("/:eventId", middleware_1.isAdmin, event_1.deleteEvent);
 //# sourceMappingURL=event.js.map

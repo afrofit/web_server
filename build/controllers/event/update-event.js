@@ -44,18 +44,20 @@ var Event_1 = require("../../entity/Event");
 var logger_1 = require("../../logger");
 var status_codes_1 = require("../../types/status-codes");
 var updateEvent = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var files, _a, description, title, paymentLinks, isHide, eventId, eventRepo, existingEvent, _i, files_1, file, fileType, results, error_1;
+    var file, _a, description, title, paymentLinks, videoUrl, isHide, eventId, eventRepo, videoLink, existingEvent, fileType, results, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 (0, logger_1.logger)("updateEvent: ".concat(JSON.stringify(req.body)));
-                files = req.files;
-                _a = req.body, description = _a.description, title = _a.title, paymentLinks = _a.paymentLinks, isHide = _a.isHide;
+                file = req.file;
+                _a = req.body, description = _a.description, title = _a.title, paymentLinks = _a.paymentLinks, videoUrl = _a.videoUrl, isHide = _a.isHide;
                 eventId = (0, mongodb_1.ObjectID)(req.params.eventId);
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 4, , 5]);
                 eventRepo = data_source_1.AppDataSource.getMongoRepository(Event_1.Event);
+                videoLink = videoUrl.split("/");
+                console.log("videoLink", videoLink);
                 return [4 /*yield*/, eventRepo.findOneBy({
                         where: { _id: eventId },
                     })];
@@ -69,24 +71,24 @@ var updateEvent = function (req, res) { return __awaiter(void 0, void 0, void 0,
                     existingEvent.description = description;
                 if (paymentLinks)
                     existingEvent.paymentLinks = paymentLinks;
+                if (videoUrl) {
+                    existingEvent.videoUrl = videoUrl;
+                    if (videoLink[2] === "drive.google.com" &&
+                        videoLink[videoLink.length - 1] === "view")
+                        existingEvent.videoUrl = "https://drive.google.com/uc?id=".concat(videoLink[5]);
+                }
                 if (!paymentLinks)
                     existingEvent.paymentLinks = "";
                 if (isHide === "true")
                     existingEvent.isHide = true;
                 if (isHide === "false")
                     existingEvent.isHide = false;
-                for (_i = 0, files_1 = files; _i < files_1.length; _i++) {
-                    file = files_1[_i];
+                if (file) {
                     fileType = file.mimetype.split("/")[0];
                     if (fileType === "image") {
                         if ((0, fs_1.existsSync)("./public/".concat(existingEvent.imageUrl)))
                             (0, fs_1.unlinkSync)("./public/".concat(existingEvent.imageUrl));
                         existingEvent.imageUrl = file.filename;
-                    }
-                    if (fileType === "video") {
-                        if ((0, fs_1.existsSync)("./public/".concat(existingEvent.videoUrl)))
-                            (0, fs_1.unlinkSync)("./public/".concat(existingEvent.videoUrl));
-                        existingEvent.videoUrl = file.filename;
                     }
                 }
                 return [4 /*yield*/, eventRepo.save(existingEvent)];
