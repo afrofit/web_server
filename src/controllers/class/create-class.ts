@@ -20,7 +20,15 @@ export const createClass = async (req: Request, res: Response) => {
     classData.title = title;
     classData.description = description;
 
-    classData.videoUrl = JSON.parse(videoUrl);
+    if (videoUrl) {
+      const videoLink = videoUrl.split("/");
+
+      classData.videoUrl = videoUrl;
+
+      if (videoLink[2] === "youtu.be") {
+        classData.videoUrl = videoLink[3];
+      }
+    }
 
     classData.isHide = false;
 

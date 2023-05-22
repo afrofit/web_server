@@ -44,13 +44,13 @@ var Class_1 = require("../../entity/Class");
 var logger_1 = require("../../logger");
 var status_codes_1 = require("../../types/status-codes");
 var updateClass = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var files, _a, description, title, isHide, classId, classRepo, existingClass, _i, files_1, file, fileType, results, error_1;
+    var file, _a, description, title, isHide, videoUrl, classId, classRepo, existingClass, videoLink, fileType, results, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 (0, logger_1.logger)("updateClass: ".concat(JSON.stringify(req.body)));
-                files = req.files;
-                _a = req.body, description = _a.description, title = _a.title, isHide = _a.isHide;
+                file = req.file;
+                _a = req.body, description = _a.description, title = _a.title, isHide = _a.isHide, videoUrl = _a.videoUrl;
                 classId = (0, mongodb_1.ObjectID)(req.params.classId);
                 _b.label = 1;
             case 1:
@@ -67,22 +67,23 @@ var updateClass = function (req, res) { return __awaiter(void 0, void 0, void 0,
                     existingClass.title = title;
                 if (description)
                     existingClass.description = description;
+                if (videoUrl) {
+                    videoLink = videoUrl.split("/");
+                    existingClass.videoUrl = videoUrl;
+                    if (videoLink[2] === "youtu.be") {
+                        existingClass.videoUrl = videoLink[3];
+                    }
+                }
                 if (isHide === "true")
                     existingClass.isHide = true;
                 if (isHide === "false")
                     existingClass.isHide = false;
-                for (_i = 0, files_1 = files; _i < files_1.length; _i++) {
-                    file = files_1[_i];
+                if (file) {
                     fileType = file.mimetype.split("/")[0];
                     if (fileType === "image") {
                         if ((0, fs_1.existsSync)("./public/".concat(existingClass.imageUrl)))
                             (0, fs_1.unlinkSync)("./public/".concat(existingClass.imageUrl));
                         existingClass.imageUrl = file.filename;
-                    }
-                    if (fileType === "video") {
-                        if ((0, fs_1.existsSync)("./public/".concat(existingClass.videoUrl)))
-                            (0, fs_1.unlinkSync)("./public/".concat(existingClass.videoUrl));
-                        existingClass.videoUrl = file.filename;
                     }
                 }
                 return [4 /*yield*/, classRepo.save(existingClass)];

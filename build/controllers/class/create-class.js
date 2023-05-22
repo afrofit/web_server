@@ -42,13 +42,13 @@ var Class_1 = require("../../entity/Class");
 var logger_1 = require("../../logger");
 var status_codes_1 = require("../../types/status-codes");
 var createClass = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var files, _a, description, title, classRepo, classData, _i, files_1, file, fileType, results, error_1;
+    var file, _a, description, title, videoUrl, classRepo, classData, videoLink, fileType, results, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 (0, logger_1.logger)("createClass: ".concat(JSON.stringify(req.body)));
-                files = req.files;
-                _a = req.body, description = _a.description, title = _a.title;
+                file = req.file;
+                _a = req.body, description = _a.description, title = _a.title, videoUrl = _a.videoUrl;
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 3, , 4]);
@@ -56,15 +56,18 @@ var createClass = function (req, res) { return __awaiter(void 0, void 0, void 0,
                 classData = new Class_1.Class();
                 classData.title = title;
                 classData.description = description;
+                if (videoUrl) {
+                    videoLink = videoUrl.split("/");
+                    classData.videoUrl = videoUrl;
+                    if (videoLink[2] === "youtu.be") {
+                        classData.videoUrl = videoLink[3];
+                    }
+                }
                 classData.isHide = false;
-                for (_i = 0, files_1 = files; _i < files_1.length; _i++) {
-                    file = files_1[_i];
+                if (file) {
                     fileType = file.mimetype.split("/")[0];
                     if (fileType === "image") {
                         classData.imageUrl = file.filename;
-                    }
-                    if (fileType === "video") {
-                        classData.videoUrl = file.filename;
                     }
                 }
                 return [4 /*yield*/, classRepo.save(classData)];

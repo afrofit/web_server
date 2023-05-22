@@ -42,30 +42,31 @@ var Event_1 = require("../../entity/Event");
 var logger_1 = require("../../logger");
 var status_codes_1 = require("../../types/status-codes");
 var createEvent = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var files, _a, description, title, paymentLinks, eventRepo, eventData, _i, files_1, file, fileType, results, error_1;
+    var file, _a, description, title, paymentLinks, videoUrl, eventRepo, videoLink, eventData, fileType, results, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 (0, logger_1.logger)("createEvent: ".concat(JSON.stringify(req.body)));
-                files = req.files;
-                _a = req.body, description = _a.description, title = _a.title, paymentLinks = _a.paymentLinks;
+                file = req.file;
+                _a = req.body, description = _a.description, title = _a.title, paymentLinks = _a.paymentLinks, videoUrl = _a.videoUrl;
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 3, , 4]);
                 eventRepo = data_source_1.AppDataSource.getMongoRepository(Event_1.Event);
+                videoLink = videoUrl.split("/");
                 eventData = new Event_1.Event();
                 eventData.title = title;
                 eventData.description = description;
-                eventData.isHide = false;
+                eventData.videoUrl = videoUrl;
+                if (videoLink[2] === "drive.google.com" &&
+                    videoLink[videoLink.length - 1] === "view")
+                    eventData.videoUrl = "https://drive.google.com/uc?id=".concat(videoLink[5]);
                 eventData.paymentLinks = paymentLinks !== null && paymentLinks !== void 0 ? paymentLinks : "";
-                for (_i = 0, files_1 = files; _i < files_1.length; _i++) {
-                    file = files_1[_i];
+                eventData.isHide = false;
+                if (file) {
                     fileType = file.mimetype.split("/")[0];
                     if (fileType === "image") {
                         eventData.imageUrl = file.filename;
-                    }
-                    if (fileType === "video") {
-                        eventData.videoUrl = file.filename;
                     }
                 }
                 return [4 /*yield*/, eventRepo.save(eventData)];
