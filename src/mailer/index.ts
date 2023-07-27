@@ -1,5 +1,5 @@
-import nodemailer from "nodemailer";
-import { logger } from "../logger";
+import nodemailer from 'nodemailer';
+import { logger } from '../logger';
 
 type mailType = {
   to: string | string[];
@@ -9,7 +9,7 @@ type mailType = {
 
 // create transporter object with smtp server details
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: 'smtp.gmail.com',
   port: 587,
   auth: {
     user: process.env.EMAIL_USER,
@@ -32,6 +32,7 @@ export const mailer = async ({ to, subject, html }: mailType) => {
     const info = await transporter.sendMail(message);
 
     logger(`Message sent: %s ${info.messageId}`);
+    return info;
   } catch (error) {
     console.error(`error: ${error}`);
   }

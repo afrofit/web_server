@@ -16,6 +16,7 @@ import { shopRoutes } from "./routes/shop";
 import { eventRoutes } from "./routes/event";
 import { activitiesRoutes } from "./routes/activities";
 import { notificationRoutes } from "./routes/notification";
+import { contactRoutes } from "./routes/contactUs";
 import Stripe from "stripe";
 
 /* App Setup */
@@ -52,6 +53,7 @@ app.use("/api/shops", shopRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/activities", activitiesRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/contact", contactRoutes);
 
 /* Catch-Alls */
 

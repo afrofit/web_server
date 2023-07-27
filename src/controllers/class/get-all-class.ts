@@ -6,8 +6,6 @@ import { logger } from "../../logger";
 import { STATUS_CODES } from "../../types/status-codes";
 
 export const getAllClass = async (req: Request, res: Response) => {
-  logger(`============getAllClass================`);
-
   try {
     const classRepo = AppDataSource.getMongoRepository(Class);
     const results = await classRepo.find({ where: { isHide: false } });
