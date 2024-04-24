@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
-import { ObjectID } from "mongodb";
+import { Request, Response } from 'express';
+import { ObjectID } from 'mongodb';
 
-import { stripe } from "../../app";
-import { AppDataSource } from "../../data-source";
-import { User } from "../../entity/User";
-import { STATUS_CODES } from "../../types/status-codes";
-import validateCreateStripeSession from "./validation/create-stripe-session";
+import { stripe } from '../../app';
+import { AppDataSource } from '../../data-source';
+import { User } from '../../entity/User';
+import { STATUS_CODES } from '../../types/status-codes';
+import validateCreateStripeSession from './validation/create-stripe-session';
 
 const createStripeSession = async (req: Request, res: Response) => {
   const { error } = validateCreateStripeSession(req.body);
@@ -41,14 +41,14 @@ const createStripeSession = async (req: Request, res: Response) => {
 
     const data: any = {
       customer: existingUser.stripeCustomerId,
-      payment_method_types: ["card"],
+      payment_method_types: ['card'],
       line_items: [
         {
           quantity: 1,
           price: priceId,
         },
       ],
-      mode: "subscription",
+      mode: 'subscription',
       subscription_data: {
         trial_period_days: process.env.TRIAL_DAYS,
       },
@@ -61,9 +61,11 @@ const createStripeSession = async (req: Request, res: Response) => {
     return res.status(STATUS_CODES.CREATED).send({ sessionId: session.id });
   } catch (error) {
     console.error(error);
-    return res
-      .status(STATUS_CODES.INTERNAL_ERROR)
-      .send("An error occured trying to create a stripe session.");
+
+    return res.status(STATUS_CODES.INTERNAL_ERROR).send({
+      message: error.message,
+      error: 'An error occurred trying to create a stripe session.',
+    });
   }
 };
 
