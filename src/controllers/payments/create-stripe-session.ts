@@ -65,7 +65,7 @@ const createStripeSession = async (req: Request, res: Response) => {
       success: true,
       message: 'Shopify session successfully created!',
       sessionId: session.id,
-      key: 'sk_test',
+      key: `${process.env.STRIPE_SECRET_KEY}`,
     });
   } catch (error) {
     console.error(error);
@@ -74,7 +74,7 @@ const createStripeSession = async (req: Request, res: Response) => {
       success: false,
       error: 'Something went wrong!',
       message: error.message,
-      key: 'sk_test',
+      key: `${process.env.STRIPE_SECRET_KEY}`,
     });
 
     // return res.status(STATUS_CODES.INTERNAL_ERROR).send({
