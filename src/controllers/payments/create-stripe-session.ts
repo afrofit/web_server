@@ -40,12 +40,13 @@ const createStripeSession = async (req: Request, res: Response) => {
     }
 
     const data: any = {
-      customer: existingUser.stripeCustomerId,
+      // customer: existingUser.stripeCustomerId,
+      customer: 'cus_PzLKsHLalD7zwy',
       payment_method_types: ['card'],
       line_items: [
         {
           quantity: 1,
-          price: priceId,
+          price: 'price_1MEvHYSDRiBpbKJAcRIoBWEn',
         },
       ],
       mode: 'subscription',
