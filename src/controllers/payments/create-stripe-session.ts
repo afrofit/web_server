@@ -72,7 +72,7 @@ const createStripeSession = async (req: Request, res: Response) => {
 
     return res.status(500).json({
       success: false,
-      error: 'Something went wrong!',
+      error: 'Something went wrong!!!',
       message: error.message,
       key: `${process.env.STRIPE_SECRET_KEY}`,
     });
