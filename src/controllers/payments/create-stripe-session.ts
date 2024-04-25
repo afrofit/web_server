@@ -40,12 +40,13 @@ const createStripeSession = async (req: Request, res: Response) => {
     }
 
     const data: any = {
-      customer: existingUser.stripeCustomerId,
+      // customer: existingUser.stripeCustomerId,
+      customer: 'cus_PzLKsHLalD7zwy',
       payment_method_types: ['card'],
       line_items: [
         {
           quantity: 1,
-          price: priceId,
+          price: 'price_1MEvHYSDRiBpbKJAcRIoBWEn',
         },
       ],
       mode: 'subscription',
@@ -58,14 +59,28 @@ const createStripeSession = async (req: Request, res: Response) => {
 
     const session = await stripe.checkout.sessions.create(data);
 
-    return res.status(STATUS_CODES.CREATED).send({ sessionId: session.id });
+    //return res.status(STATUS_CODES.CREATED).send({ sessionId: session.id });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Shopify session successfully created!',
+      sessionId: session.id,
+      key: `${process.env.STRIPE_SECRET_KEY}`,
+    });
   } catch (error) {
     console.error(error);
 
-    return res.status(STATUS_CODES.INTERNAL_ERROR).send({
+    return res.status(500).json({
+      success: false,
+      error: 'Something went wrong!!!',
       message: error.message,
-      error: 'An error occurred trying to create a stripe session.',
+      key: `${process.env.STRIPE_SECRET_KEY}`,
     });
+
+    // return res.status(STATUS_CODES.INTERNAL_ERROR).send({
+    //   message: error.message,
+    //   error: 'An error occurred trying to create a stripe session.',
+    // });
   }
 };
 
