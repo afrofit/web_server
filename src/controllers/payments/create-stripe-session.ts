@@ -52,7 +52,7 @@ const createStripeSession = async (req: Request, res: Response) => {
       subscription_data: {
         trial_period_days: process.env.TRIAL_DAYS,
       },
-      success_url: `${process.env.CLIENT_URL}/about?id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.CLIENT_URL}/about?id={CHECKOUT_SESSION_ID}&user_id=${userId}`,
       cancel_url: `${process.env.CLIENT_URL}/plan?id={CHECKOUT_SESSION_ID}`,
     };
 
